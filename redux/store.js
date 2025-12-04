@@ -1,12 +1,28 @@
 import { configureStore } from '@reduxjs/toolkit';
 import formReducer from './formSlice';
 import donorReducer from './donorSlice';
+import regionReducer from './regionSlice';
+import institutionTypeReducer from './institutionTypeSlice';
+import schoolReducer from './schoolSlice';
+import genderReducer from './genderSlice';
+import studentReducer from './studentSlice';
+import teacherReducer from './teacherSlice';
+import educationLevelReducer from './educationLevelSlice';
+import universityReducer from './universitySlice';
 
 
 const store = configureStore({
   reducer: {
     form: formReducer,
     donor: donorReducer,
+    school: schoolReducer,
+    region: regionReducer,
+    institutionType: institutionTypeReducer,
+    gender: genderReducer,
+    student: studentReducer,
+    teacher: teacherReducer,
+    educationLevel: educationLevelReducer,
+    university: universityReducer,
   },
 });
 

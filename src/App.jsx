@@ -6,7 +6,8 @@ import Analytics from '../pages/Analytics';
 import Projects from '../pages/Projects';
 import Donors from '../pages/Donors';
 import Surveys from '../pages/Surveys';
-import Schools from '../pages/Schools';
+import Schools from '../pages/schools/Schools';
+import School_details from '../pages/schools/School_details';
 import Universities from '../pages/Universities';
 import Centers from '../pages/Centers';
 import Volunteers from '../pages/Volunteers';
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/activities" element={<Activities />} />
           <Route path="/surveys" element={<Surveys />} />
           <Route path="/schools" element={<Schools />} />
+          <Route path="/schools/:schoolName" element={<School_details />} />
           <Route path="/universities" element={<Universities />} />
           <Route path="/centers" element={<Centers />} />
           <Route path="/volunteers" element={<Volunteers />} />
