@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Plus, Trash2, Pencil, Eye, ArrowRight, ArrowLeftIcon } from "lucide-react";
 import dayjs from "dayjs";
 
-import { addSchool, deleteSchool, fetchSchools, updateSchool } from "../../redux/schoolSlice";
-
 import {
     Table,
     TableBody,
@@ -41,18 +39,17 @@ import { addStudent, updateStudent, deleteStudent, fetchStudents } from "../../r
 import { fetchGenders } from "../../redux/genderSlice";
 import { fetchEducationLevel } from "../../redux/educationLevelSlice";
 import { fetchTeachers } from "../../redux/teacherSlice";
-import { fetchUniversities } from "../../redux/universitySlice";
+import { fetchCenters } from "../../redux/centerSlice";
 
 
-
-const SchoolDetails = () => {
+const CenterDetails = () => {
     const dispatch = useDispatch();
     const { students } = useSelector((state) => state.student);
     const { genders } = useSelector((state) => state.gender);
     const { teachers } = useSelector((state) => state.teacher);
-    const { universities } = useSelector((state) => state.university);
+    // const { centers } = useSelector((state) => state.center);
     const { educationLevels } = useSelector((state) => state.educationLevel);
-    const { schools, status } = useSelector((state) => state.school);
+    const { centers, status } = useSelector((state) => state.center);
 
     const [editingStudent, setEditingStudent] = useState(null);
     const [isCreateStudentOpen, setIsCreateStudentOpen] = useState(false);
@@ -64,9 +61,9 @@ const SchoolDetails = () => {
     const [isEditTeacherOpen, setIsEditTeacherOpen] = useState(false);
     const [isDeleteTeacherOpen, setIsDeleteTeacherOpen] = useState(false);
 
-    const { schoolName } = useParams();
+    const { centerName } = useParams();
     const location = useLocation();
-    const school = location.state?.school;
+    const center = location.state?.center;
     const [editingschool, setEditingschool] = useState(null); // Track the school you're editing
 
 
@@ -83,15 +80,16 @@ const SchoolDetails = () => {
     const [email, setEmail] = useState("");
     const [genderChoice, setGender] = useState("");
     const [schoolChoice, setSchoolChoice] = useState("");
+    const [centerChoice, setCenterChoice] = useState("");
     const [universityChoice, setUniversityChoice] = useState("");
 
     useEffect(() => {
-        dispatch(fetchSchools());
-        dispatch(fetchStudents(schoolName));
+        dispatch(fetchCenters());
+        dispatch(fetchStudents(centerName));
         dispatch(fetchGenders());
         dispatch(fetchEducationLevel());
         dispatch(fetchTeachers());
-        dispatch(fetchUniversities());
+        dispatch(fetchCenters());
     }, [dispatch]);
 
 
@@ -108,18 +106,19 @@ const SchoolDetails = () => {
         setEmail("");
         setGender(0);
         setSchoolChoice(0);
+        setCenterChoice(0);
         setUniversityChoice(0);
         setIsCreateStudentOpen(false);
     };
 
     const handleAddStudent = () => {
-        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice) {
+        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice ) {
             alert("Please fill in all required fields");
             return;
         }
         dispatch(addStudent({
             first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice
+            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, center_id: centerChoice, university_id: universityChoice
         }))
             .unwrap()
             .then(() => {
@@ -137,8 +136,9 @@ const SchoolDetails = () => {
                 setGender(0);
                 setSchoolChoice(0);
                 setUniversityChoice(0);
+                setCenterChoice(0);
                 setIsCreateStudentOpen(false);
-                dispatch(fetchStudents(schoolName));
+                dispatch(fetchStudents(centerName));
 
             });
     };
@@ -158,13 +158,14 @@ const SchoolDetails = () => {
         setGender(student.gender?.id.toString() || "");
         setSchoolChoice(student.school?.id.toString() || "");
         setUniversityChoice(student.university?.id.toString() || "");
+        setCenterChoice(student.center?.id.toString() || "");
         setIsEditStudentOpen(true);
     };
 
     const handleUpdateStudent = () => {
         dispatch(updateStudent({
             id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice
+            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, center_id: centerChoice, university_id: universityChoice
         }))
             .unwrap()
             .then(() => {
@@ -183,9 +184,10 @@ const SchoolDetails = () => {
                 setGender(0);
                 setSchoolChoice(0);
                 setUniversityChoice(0);
-                dispatch(fetchStudents(schoolName));
+                setCenterChoice(0);
+                dispatch(fetchStudents(centerName));
             });
-        console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, universityChoice });
+        console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, centerChoice,universityChoice });
         setEditingStudent(null); // Close the dialog after updating
     };
 
@@ -208,8 +210,8 @@ const SchoolDetails = () => {
                 // setEmail("");
                 // setGender(0);
                 // setSchoolChoice(0);
-                // setUniversityChoice(0);
-                dispatch(fetchStudents(schoolName));
+                // setCenterChoice(0);
+                dispatch(fetchStudents(centerName));
             });
 
 
@@ -232,25 +234,25 @@ const SchoolDetails = () => {
                 <div className="flex justify-between items-center">
 
                     <Link
-                        to={`/schools`}
+                        to={`/centers`}
                     >
                         <div className="flex items-center gap-2 cursor-pointer">
                             <ArrowLeftIcon />
-                            <h2 className="text-xl font-semibold">{schoolName}</h2>
+                            <h2 className="text-xl font-semibold">{centerName}</h2>
                         </div>
                     </Link>
 
-                    {/* Create school */}
+                    {/* Create center */}
                 </div>
 
                 <div className="flex items-center gap-2 mt-3 mb-3">
-                    <h1><strong>Type: </strong>{school.type.name}</h1><br></br>
-                    <h1><strong>Region: </strong>{school.region.name}</h1><br></br>
-                    <h1><strong>Computers: </strong>{school.computers}</h1><br></br>
-                    <h1><strong>Libraries: </strong>{school.libraries}</h1><br></br>
-                    <h1><strong>Water Reserves: </strong>{school.water_reserves}</h1><br></br>
-                    <h1><strong>Toilets: </strong>{school.toilets}</h1><br></br>
-                    <h1><strong>Date created: </strong>{dayjs(school.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
+                    <h1><strong>Type: </strong>{center.type.name}</h1><br></br>
+                    <h1><strong>Region: </strong>{center.region.name}</h1><br></br>
+                    <h1><strong>Computers: </strong>{center.computers}</h1><br></br>
+                    <h1><strong>Libraries: </strong>{center.libraries}</h1><br></br>
+                    <h1><strong>Water Reserves: </strong>{center.water_reserves}</h1><br></br>
+                    <h1><strong>Toilets: </strong>{center.toilets}</h1><br></br>
+                    <h1><strong>Date created: </strong>{dayjs(center.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
                 </div>
                 {/* Teachers section */}
                 <div className="flex justify-between items-center mt-9">
@@ -330,7 +332,7 @@ const SchoolDetails = () => {
                             </div>
 
                             <div className="grid w-full max-w items-center gap-1.5">
-                                <Label htmlFor="course">Course name</Label>
+                                <Label htmlFor="course">Course name / Skill</Label>
                                 <Input type="text" id="course"
                                     value={courseName}
                                     onChange={(e) => setCourseName(e.target.value)}
@@ -376,7 +378,7 @@ const SchoolDetails = () => {
                             </div>
 
 
-                            <div className="grid w-full max-w items-center gap-1.5">
+                            {/* <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">School</Label>
                                 <Select
                                     value={schoolChoice}
@@ -387,7 +389,7 @@ const SchoolDetails = () => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            {Array.isArray(schools) && schools.map((type) => (
+                                            {Array.isArray(centers) && centers.map((type) => (
                                                 <SelectItem key={type.id} value={type.id.toString()}>
                                                     {type.name}
                                                 </SelectItem>
@@ -395,20 +397,20 @@ const SchoolDetails = () => {
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </div> */}
 
                             <div className="grid w-full max-w items-center gap-1.5">
-                                <Label htmlFor="education-level">University</Label>
+                                <Label htmlFor="education-level">Center</Label>
                                 <Select
-                                    value={universityChoice}
-                                    onValueChange={(value) => setUniversityChoice(value)}
+                                    value={centerChoice}
+                                    onValueChange={(value) => setCenterChoice(value)}
                                 >
                                     <SelectTrigger className="w-full max-w">
-                                        <SelectValue placeholder="Select University" />
+                                        <SelectValue placeholder="Select Center" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            {Array.isArray(universities) && universities.map((type) => (
+                                            {Array.isArray(centers) && centers.map((type) => (
                                                 <SelectItem key={type.id} value={type.id.toString()}>
                                                     {type.name}
                                                 </SelectItem>
@@ -423,7 +425,7 @@ const SchoolDetails = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
-                {status === "loading" && <p className="text-gray-500 mt-2">Loading schools...</p>}
+                {status === "loading" && <p className="text-gray-500 mt-2">Loading centers...</p>}
 
                 <Table>
                     <TableHeader>
@@ -545,7 +547,7 @@ const SchoolDetails = () => {
 
 
                                                     <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="course">Course name</Label>
+                                                        <Label htmlFor="course">Course name / Skill</Label>
                                                         <Input type="text" id="course"
                                                             value={courseName}
                                                             onChange={(e) => setCourseName(e.target.value)}
@@ -591,7 +593,7 @@ const SchoolDetails = () => {
                                                     </div>
 
 
-                                                    <div className="grid w-full max-w items-center gap-1.5">
+                                                    {/* <div className="grid w-full max-w items-center gap-1.5">
                                                         <Label htmlFor="education-level">School</Label>
                                                         <Select
                                                             value={schoolChoice}
@@ -602,7 +604,7 @@ const SchoolDetails = () => {
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
-                                                                    {Array.isArray(schools) && schools.map((type) => (
+                                                                    {Array.isArray(centers) && centers.map((type) => (
                                                                         <SelectItem key={type.id} value={type.id.toString()}>
                                                                             {type.name}
                                                                         </SelectItem>
@@ -610,20 +612,20 @@ const SchoolDetails = () => {
                                                                 </SelectGroup>
                                                             </SelectContent>
                                                         </Select>
-                                                    </div>
+                                                    </div> */}
 
                                                     <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">University</Label>
+                                                        <Label htmlFor="education-level">Center</Label>
                                                         <Select
-                                                            value={universityChoice}
-                                                            onValueChange={(value) => setUniversityChoice(value)}
+                                                            value={centerChoice}
+                                                            onValueChange={(value) => setCenterChoice(value)}
                                                         >
                                                             <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select University" />
+                                                                <SelectValue placeholder="Select Center" />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
-                                                                    {Array.isArray(universities) && universities.map((type) => (
+                                                                    {Array.isArray(centers) && centers.map((type) => (
                                                                         <SelectItem key={type.id} value={type.id.toString()}>
                                                                             {type.name}
                                                                         </SelectItem>
@@ -679,4 +681,4 @@ const SchoolDetails = () => {
         </div>
     );
 }
-export default SchoolDetails
+export default CenterDetails

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjects, createProject } from "../redux/formSlice";
+import { fetchProjects, createProject } from "../redux/projectSlice";
 import { Folder, Plus, LogOut } from "lucide-react";
 import dayjs from "dayjs";
 

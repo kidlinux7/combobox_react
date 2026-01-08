@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjects, createProject } from "../redux/formSlice";
+import { fetchProjects, createProject } from "../redux/projectSlice";
 import { Folder, Plus, LogOut } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 
 const Projects = () => {
   const dispatch = useDispatch();
-  const { projects, status } = useSelector((state) => state.form);
+  const { projects, status } = useSelector((state) => state.project);
   const [projectName, setProjectName] = useState("");
 
   useEffect(() => {
@@ -38,9 +38,6 @@ const Projects = () => {
 
   return (
     <div className="p-1">
-
-
-
       {/* Content */}
       <div className="mt-6">
         <div className="flex justify-between items-center">

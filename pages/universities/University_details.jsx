@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Plus, Trash2, Pencil, Eye, ArrowRight, ArrowLeftIcon } from "lucide-react";
 import dayjs from "dayjs";
 
-import { addSchool, deleteSchool, fetchSchools, updateSchool } from "../../redux/schoolSlice";
-
 import {
     Table,
     TableBody,
@@ -45,14 +43,14 @@ import { fetchUniversities } from "../../redux/universitySlice";
 
 
 
-const SchoolDetails = () => {
+const UniversityDetails = () => {
     const dispatch = useDispatch();
     const { students } = useSelector((state) => state.student);
     const { genders } = useSelector((state) => state.gender);
     const { teachers } = useSelector((state) => state.teacher);
-    const { universities } = useSelector((state) => state.university);
+    // const { universities } = useSelector((state) => state.university);
     const { educationLevels } = useSelector((state) => state.educationLevel);
-    const { schools, status } = useSelector((state) => state.school);
+    const { universities, status } = useSelector((state) => state.university);
 
     const [editingStudent, setEditingStudent] = useState(null);
     const [isCreateStudentOpen, setIsCreateStudentOpen] = useState(false);
@@ -64,9 +62,9 @@ const SchoolDetails = () => {
     const [isEditTeacherOpen, setIsEditTeacherOpen] = useState(false);
     const [isDeleteTeacherOpen, setIsDeleteTeacherOpen] = useState(false);
 
-    const { schoolName } = useParams();
+    const { universityName } = useParams();
     const location = useLocation();
-    const school = location.state?.school;
+    const university = location.state?.university;
     const [editingschool, setEditingschool] = useState(null); // Track the school you're editing
 
 
@@ -86,8 +84,8 @@ const SchoolDetails = () => {
     const [universityChoice, setUniversityChoice] = useState("");
 
     useEffect(() => {
-        dispatch(fetchSchools());
-        dispatch(fetchStudents(schoolName));
+        dispatch(fetchUniversities());
+        dispatch(fetchStudents(universityName));
         dispatch(fetchGenders());
         dispatch(fetchEducationLevel());
         dispatch(fetchTeachers());
@@ -107,13 +105,13 @@ const SchoolDetails = () => {
         setPhone("");
         setEmail("");
         setGender(0);
-        setSchoolChoice(0);
+        setSchoolChoice("");
         setUniversityChoice(0);
         setIsCreateStudentOpen(false);
     };
 
     const handleAddStudent = () => {
-        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice) {
+        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice ) {
             alert("Please fill in all required fields");
             return;
         }
@@ -135,10 +133,10 @@ const SchoolDetails = () => {
                 setPhone("");
                 setEmail("");
                 setGender(0);
-                setSchoolChoice(0);
+                setSchoolChoice("");
                 setUniversityChoice(0);
                 setIsCreateStudentOpen(false);
-                dispatch(fetchStudents(schoolName));
+                dispatch(fetchStudents(universityName));
 
             });
     };
@@ -181,9 +179,9 @@ const SchoolDetails = () => {
                 setPhone("");
                 setEmail("");
                 setGender(0);
-                setSchoolChoice(0);
+                setSchoolChoice("");
                 setUniversityChoice(0);
-                dispatch(fetchStudents(schoolName));
+                dispatch(fetchStudents(universityName));
             });
         console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, universityChoice });
         setEditingStudent(null); // Close the dialog after updating
@@ -209,7 +207,7 @@ const SchoolDetails = () => {
                 // setGender(0);
                 // setSchoolChoice(0);
                 // setUniversityChoice(0);
-                dispatch(fetchStudents(schoolName));
+                dispatch(fetchStudents(universityName));
             });
 
 
@@ -232,25 +230,25 @@ const SchoolDetails = () => {
                 <div className="flex justify-between items-center">
 
                     <Link
-                        to={`/schools`}
+                        to={`/universities`}
                     >
                         <div className="flex items-center gap-2 cursor-pointer">
                             <ArrowLeftIcon />
-                            <h2 className="text-xl font-semibold">{schoolName}</h2>
+                            <h2 className="text-xl font-semibold">{universityName}</h2>
                         </div>
                     </Link>
 
-                    {/* Create school */}
+                    {/* Create university */}
                 </div>
 
                 <div className="flex items-center gap-2 mt-3 mb-3">
-                    <h1><strong>Type: </strong>{school.type.name}</h1><br></br>
-                    <h1><strong>Region: </strong>{school.region.name}</h1><br></br>
-                    <h1><strong>Computers: </strong>{school.computers}</h1><br></br>
-                    <h1><strong>Libraries: </strong>{school.libraries}</h1><br></br>
-                    <h1><strong>Water Reserves: </strong>{school.water_reserves}</h1><br></br>
-                    <h1><strong>Toilets: </strong>{school.toilets}</h1><br></br>
-                    <h1><strong>Date created: </strong>{dayjs(school.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
+                    <h1><strong>Type: </strong>{university.type.name}</h1><br></br>
+                    <h1><strong>Region: </strong>{university.region.name}</h1><br></br>
+                    <h1><strong>Computers: </strong>{university.computers}</h1><br></br>
+                    <h1><strong>Libraries: </strong>{university.libraries}</h1><br></br>
+                    <h1><strong>Water Reserves: </strong>{university.water_reserves}</h1><br></br>
+                    <h1><strong>Toilets: </strong>{university.toilets}</h1><br></br>
+                    <h1><strong>Date created: </strong>{dayjs(university.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
                 </div>
                 {/* Teachers section */}
                 <div className="flex justify-between items-center mt-9">
@@ -376,7 +374,7 @@ const SchoolDetails = () => {
                             </div>
 
 
-                            <div className="grid w-full max-w items-center gap-1.5">
+                            {/* <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">School</Label>
                                 <Select
                                     value={schoolChoice}
@@ -387,7 +385,7 @@ const SchoolDetails = () => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            {Array.isArray(schools) && schools.map((type) => (
+                                            {Array.isArray(universities) && universities.map((type) => (
                                                 <SelectItem key={type.id} value={type.id.toString()}>
                                                     {type.name}
                                                 </SelectItem>
@@ -395,7 +393,7 @@ const SchoolDetails = () => {
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </div> */}
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">University</Label>
@@ -423,7 +421,7 @@ const SchoolDetails = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
-                {status === "loading" && <p className="text-gray-500 mt-2">Loading schools...</p>}
+                {status === "loading" && <p className="text-gray-500 mt-2">Loading universities...</p>}
 
                 <Table>
                     <TableHeader>
@@ -591,7 +589,7 @@ const SchoolDetails = () => {
                                                     </div>
 
 
-                                                    <div className="grid w-full max-w items-center gap-1.5">
+                                                    {/* <div className="grid w-full max-w items-center gap-1.5">
                                                         <Label htmlFor="education-level">School</Label>
                                                         <Select
                                                             value={schoolChoice}
@@ -602,7 +600,7 @@ const SchoolDetails = () => {
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
-                                                                    {Array.isArray(schools) && schools.map((type) => (
+                                                                    {Array.isArray(universities) && universities.map((type) => (
                                                                         <SelectItem key={type.id} value={type.id.toString()}>
                                                                             {type.name}
                                                                         </SelectItem>
@@ -610,7 +608,7 @@ const SchoolDetails = () => {
                                                                 </SelectGroup>
                                                             </SelectContent>
                                                         </Select>
-                                                    </div>
+                                                    </div> */}
 
                                                     <div className="grid w-full max-w items-center gap-1.5">
                                                         <Label htmlFor="education-level">University</Label>
@@ -679,4 +677,4 @@ const SchoolDetails = () => {
         </div>
     );
 }
-export default SchoolDetails
+export default UniversityDetails

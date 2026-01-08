@@ -18,7 +18,6 @@ import {
   } from "lucide-react";
   import { Link, useLocation } from "react-router-dom";
   import { cn } from "@/lib/utils";
-import Universities from "../../../pages/Universities";
   
   const navItems = [
     { label: "Analytics", icon: <ChartColumnBig size={18} />, href: "/" },

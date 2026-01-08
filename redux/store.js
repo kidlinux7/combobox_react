@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import formReducer from './formSlice';
+import projectReducer from './projectSlice';
 import donorReducer from './donorSlice';
 import regionReducer from './regionSlice';
 import institutionTypeReducer from './institutionTypeSlice';
@@ -9,11 +9,14 @@ import studentReducer from './studentSlice';
 import teacherReducer from './teacherSlice';
 import educationLevelReducer from './educationLevelSlice';
 import universityReducer from './universitySlice';
+import centerReducer from './centerSlice';
+import volunteerReducer from './volunteerSlice';
+
 
 
 const store = configureStore({
   reducer: {
-    form: formReducer,
+    project: projectReducer,
     donor: donorReducer,
     school: schoolReducer,
     region: regionReducer,
@@ -23,6 +26,8 @@ const store = configureStore({
     teacher: teacherReducer,
     educationLevel: educationLevelReducer,
     university: universityReducer,
+    center: centerReducer,
+    volunteer: volunteerReducer,
   },
 });
 

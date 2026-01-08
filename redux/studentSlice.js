@@ -1,24 +1,26 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// Base API URL from environment variables
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const fetchStudents = createAsyncThunk("students/fetchStudents", async () => {
-    const response = await axios.get(`${API_BASE_URL}/students`);
+export const fetchStudents = createAsyncThunk("students/fetchStudents", async (query = "") => {
+    const response = await axios.get(`${API_BASE_URL}/students/${query}`);
     return response.data;
 });
 
 export const addStudent = createAsyncThunk("students/addStudent", async (formData) => {
-    const response = await axios.post(`${API_BASE_URL}/students`, formData);
+    const response = await axios.post(`${API_BASE_URL}/students/""`, formData);
     return response.data;
 });
 
 export const updateStudent = createAsyncThunk("students/updateStudent", async (formData) => {
-    const response = await axios.put(`${API_BASE_URL}/students`, formData);
+    const response = await axios.put(`${API_BASE_URL}/students/""`, formData);
     return response.data;
 });
 
 export const deleteStudent = createAsyncThunk("students/deleteStudent", async (formData) => {
-    const response = await axios.delete(`${API_BASE_URL}/students`, {
+    const response = await axios.delete(`${API_BASE_URL}/students/""`, {
         data: formData, // 👈 wrap formData here
     });
     return response.data;
@@ -44,7 +46,7 @@ const StudentSlice = createSlice({
             .addCase(fetchStudents.rejected, (state) => {
                 state.status = "failed";
             })
-            
+
             .addCase(addStudent.fulfilled, (state, action) => {
                 state.students.push(action.payload);
             })
