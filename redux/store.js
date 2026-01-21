@@ -11,6 +11,7 @@ import educationLevelReducer from './educationLevelSlice';
 import universityReducer from './universitySlice';
 import centerReducer from './centerSlice';
 import volunteerReducer from './volunteerSlice';
+import nationalityReducer from './nationalitySlice'
 
 
 
@@ -28,6 +29,7 @@ const store = configureStore({
     university: universityReducer,
     center: centerReducer,
     volunteer: volunteerReducer,
+    nationality: nationalityReducer
   },
 });
 

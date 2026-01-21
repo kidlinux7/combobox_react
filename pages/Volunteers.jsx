@@ -34,11 +34,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { addVolunteer, updateVolunteer, deleteVolunteer, fetchVolunteers } from "../redux/volunteerSlice";
 import { fetchGenders } from "../redux/genderSlice";
 import { fetchEducationLevel } from "../redux/educationLevelSlice";
-import { fetchTeachers } from "../redux/teacherSlice";
 import { fetchProjects } from "../redux/projectSlice";
+import { fetchNationalities } from "../redux/nationalitySlice";
 
 
 const Volunteers = () => {
@@ -46,6 +47,7 @@ const Volunteers = () => {
     const { volunteers } = useSelector((state) => state.volunteer);
     const { projects } = useSelector((state) => state.project);
     const { genders } = useSelector((state) => state.gender);
+    const { nationalities } = useSelector((state) => state.nationality);
     const { educationLevels } = useSelector((state) => state.educationLevel);
     const { centers, status } = useSelector((state) => state.center);
 
@@ -54,38 +56,29 @@ const Volunteers = () => {
     const [isEditVolunteerOpen, setIsEditVolunteerOpen] = useState(false);
     const [isDeleteVolunteerOpen, setIsDeleteVolunteerOpen] = useState(false);
 
-    const [editingTeacher, setEditingTeacher] = useState(null);
-    const [isCreateTeacherOpen, setIsCreateTeacherOpen] = useState(false);
-    const [isEditTeacherOpen, setIsEditTeacherOpen] = useState(false);
-    const [isDeleteTeacherOpen, setIsDeleteTeacherOpen] = useState(false);
-
-    const { centerName } = useParams();
-    const location = useLocation();
-    const center = location.state?.center;
     const [editingschool, setEditingschool] = useState(null); // Track the school you're editing
 
 
-    // Volunteer/Teachers form states
+    // Volunteer form states
     const [id, setID] = useState(0);
     const [firstName, setFirstname] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState(0);
-
+    const [volunteerNationality, setNationality] = useState("");
     const [educationLevel, setEducationLevel] = useState("");
     const [courseName, setCourseName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [genderChoice, setGender] = useState("");
-    const [schoolChoice, setSchoolChoice] = useState("");
-    const [centerChoice, setCenterChoice] = useState("");
-    const [universityChoice, setUniversityChoice] = useState("");
+    const [volunteeredProjects, setVolunteeredProjects] = useState([]);
 
     useEffect(() => {
+        dispatch(fetchProjects());
         dispatch(fetchVolunteers());
         dispatch(fetchGenders());
         dispatch(fetchEducationLevel());
-        dispatch(fetchVolunteers());
+        dispatch(fetchNationalities());
     }, [dispatch]);
 
 
@@ -95,15 +88,13 @@ const Volunteers = () => {
         setMiddleName("");
         setLastName("");
         setAge("");
-
+        setNationality("")
         setEducationLevel(0);
         setCourseName("");
         setPhone("");
         setEmail("");
         setGender(0);
-        setSchoolChoice(0);
-        setCenterChoice(0);
-        setUniversityChoice(0);
+        setVolunteeredProjects([]);
         setIsCreateVolunteerOpen(false);
     };
 
@@ -114,7 +105,7 @@ const Volunteers = () => {
         }
         dispatch(addVolunteer({
             first_name: firstName, middle_name: middleName, last_name: lastName, age: age,
-            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, center_id: centerChoice, university_id: universityChoice
+            education_level_id: Number(educationLevel), nationality: volunteerNationality, phone: phone, email: email, gender_id: genderChoice, projects: volunteeredProjects
         }))
             .unwrap()
             .then(() => {
@@ -124,17 +115,15 @@ const Volunteers = () => {
                 setMiddleName("");
                 setLastName("");
                 setAge("");
-
+                setNationality("");
                 setEducationLevel(0);
                 setCourseName("");
                 setPhone("");
                 setEmail("");
                 setGender(0);
-                setSchoolChoice(0);
-                setUniversityChoice(0);
-                setCenterChoice(0);
+                setVolunteeredProjects([]);
                 setIsCreateVolunteerOpen(false);
-                dispatch(fetchVolunteers(centerName));
+                dispatch(fetchVolunteers());
 
             });
     };
@@ -145,22 +134,21 @@ const Volunteers = () => {
         setFirstname(volunteer.first_name);
         setMiddleName(volunteer.middle_name);
         setLastName(volunteer.last_name);
+        setNationality(volunteer.volunteerNationality);
         setAge(volunteer.age);
         setEducationLevel(volunteer.education_level?.id.toString() || "");
         setCourseName(volunteer.course_name);
         setPhone(volunteer.phone);
         setEmail(volunteer.email);
         setGender(volunteer.gender?.id.toString() || "");
-        setSchoolChoice(volunteer.school?.id.toString() || "");
-        setUniversityChoice(volunteer.university?.id.toString() || "");
-        setCenterChoice(volunteer.center?.id.toString() || "");
+        setVolunteeredProjects(volunteer.projects || []);
         setIsEditVolunteerOpen(true);
     };
 
     const handleUpdateVolunteer = () => {
         dispatch(updateVolunteer({
             id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age,
-            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, center_id: centerChoice, university_id: universityChoice
+            education_level: educationLevel, nationality: volunteerNationality, phone: phone, email: email, gender_id: genderChoice, projects: volunteeredProjects
         }))
             .unwrap()
             .then(() => {
@@ -171,18 +159,16 @@ const Volunteers = () => {
                 setMiddleName("");
                 setLastName("");
                 setAge("");
-
+                setNationality("");
                 setEducationLevel(0);
                 setCourseName("");
                 setPhone("");
                 setEmail("");
                 setGender(0);
-                setSchoolChoice(0);
-                setUniversityChoice(0);
-                setCenterChoice(0);
-                dispatch(fetchVolunteers(centerName));
+                setVolunteeredProjects([]);
+                setIsCreateVolunteerOpen(false);
+                dispatch(fetchVolunteers());
             });
-        console.log("Update Volunteer:", { id, firstName, middleName, lastName, age, educationLevel, courseName, phone, email, genderChoice, schoolChoice, centerChoice, universityChoice });
         setEditingVolunteer(null); // Close the dialog after updating
     };
 
@@ -193,24 +179,8 @@ const Volunteers = () => {
                 resetForm();
                 setIsDeleteVolunteerOpen(false);
                 setEditingVolunteer(null);
-                // setID(0);
-                // setFirstname("");
-                // setMiddleName("");
-                // setLastName("");
-                // setAge("");
-                // setAgeRange("");
-                // setEducationLevel(0);
-                // setCourseName("");
-                // setPhone("");
-                // setEmail("");
-                // setGender(0);
-                // setSchoolChoice(0);
-                // setCenterChoice(0);
-                dispatch(fetchVolunteers(centerName));
+                dispatch(fetchVolunteers());
             });
-
-
-
     };
 
 
@@ -274,13 +244,28 @@ const Volunteers = () => {
                                 />
                             </div>
 
-                            {/* <div className="grid w-full max-w items-center gap-1.5">
-                                <Label htmlFor="age-range">Age range</Label>
-                                <Input type="text" id="age-range"
-                                    value={}
-                                    onChange={(e) => setAgeRange(e.target.value)}
-                                />
-                            </div> */}
+                            <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="nationality">Nationality</Label>
+
+                                <Select
+                                    value={volunteerNationality}
+                                    onValueChange={(value) => setNationality(value)}
+                                >
+                                    <SelectTrigger className="w-full max-w">
+                                        <SelectValue placeholder="Select Nationality" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {Array.isArray(nationalities) && nationalities.map((type) => (
+                                                <SelectItem key={type.id} value={type.id.toString()}>
+                                                    {type.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">Educational Level</Label>
@@ -349,49 +334,15 @@ const Volunteers = () => {
                                 </Select>
                             </div>
 
-
-                            {/* <div className="grid w-full max-w items-center gap-1.5">
-                                <Label htmlFor="education-level">School</Label>
-                                <Select
-                                    value={schoolChoice}
-                                    onValueChange={(value) => setSchoolChoice(value)}
-                                >
-                                    <SelectTrigger className="w-full max-w">
-                                        <SelectValue placeholder="Select School" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {Array.isArray(centers) && centers.map((type) => (
-                                                <SelectItem key={type.id} value={type.id.toString()}>
-                                                    {type.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div> */}
-
                             <div className="grid w-full max-w items-center gap-1.5">
-                                <Label htmlFor="education-level">Center</Label>
-                                <Select
-                                    value={centerChoice}
-                                    onValueChange={(value) => setCenterChoice(value)}
-                                >
-                                    <SelectTrigger className="w-full max-w">
-                                        <SelectValue placeholder="Select Center" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {Array.isArray(centers) && centers.map((type) => (
-                                                <SelectItem key={type.id} value={type.id.toString()}>
-                                                    {type.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <Label htmlFor="projects">Projects</Label>
+                                <MultiSelect
+                                    options={Array.isArray(projects) ? projects.map(p => ({ label: p.name, value: p.id.toString() })) : []}
+                                    value={volunteeredProjects}
+                                    onValueChange={(value) => setVolunteeredProjects(value)}
+                                    placeholder="Select Projects"
+                                />
                             </div>
-
 
                             <Button onClick={handleAddVolunteer}>Create</Button>
                         </DialogContent>
@@ -587,24 +538,13 @@ const Volunteers = () => {
                                                     </div> */}
 
                                                     <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">Center</Label>
-                                                        <Select
-                                                            value={centerChoice}
-                                                            onValueChange={(value) => setCenterChoice(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select Center" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(centers) && centers.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
+                                                        <Label htmlFor="projects">Projects</Label>
+                                                        <MultiSelect
+                                                            options={Array.isArray(projects) ? projects.map(p => ({ label: p.name, value: p.id.toString() })) : []}
+                                                            value={volunteeredProjects}
+                                                            onValueChange={(value) => setVolunteeredProjects(value)}
+                                                            placeholder="Select Projects"
+                                                        />
                                                     </div>
 
 

@@ -84,6 +84,8 @@ const SchoolDetails = () => {
     const [genderChoice, setGender] = useState("");
     const [schoolChoice, setSchoolChoice] = useState("");
     const [universityChoice, setUniversityChoice] = useState("");
+    const [centerChoice, setCenterChoice] = useState("");
+
 
     useEffect(() => {
         dispatch(fetchSchools());
@@ -109,6 +111,7 @@ const SchoolDetails = () => {
         setGender(0);
         setSchoolChoice(0);
         setUniversityChoice(0);
+        setCenterChoice(0);
         setIsCreateStudentOpen(false);
     };
 
@@ -119,7 +122,7 @@ const SchoolDetails = () => {
         }
         dispatch(addStudent({
             first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice
+            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice,center_id: centerChoice
         }))
             .unwrap()
             .then(() => {
@@ -137,6 +140,7 @@ const SchoolDetails = () => {
                 setGender(0);
                 setSchoolChoice(0);
                 setUniversityChoice(0);
+                setCenterChoice(0);
                 setIsCreateStudentOpen(false);
                 dispatch(fetchStudents(schoolName));
 
@@ -158,13 +162,15 @@ const SchoolDetails = () => {
         setGender(student.gender?.id.toString() || "");
         setSchoolChoice(student.school?.id.toString() || "");
         setUniversityChoice(student.university?.id.toString() || "");
+        setCenterChoice(student.center?.id.toString() || "");
+
         setIsEditStudentOpen(true);
     };
 
     const handleUpdateStudent = () => {
         dispatch(updateStudent({
             id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice
+            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice,center_id: centerChoice
         }))
             .unwrap()
             .then(() => {
@@ -185,7 +191,6 @@ const SchoolDetails = () => {
                 setUniversityChoice(0);
                 dispatch(fetchStudents(schoolName));
             });
-        console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, universityChoice });
         setEditingStudent(null); // Close the dialog after updating
     };
 
