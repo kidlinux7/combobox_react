@@ -75,6 +75,8 @@ const SchoolDetails = () => {
     const [firstName, setFirstname] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [disability, setDisability] = useState(false);
+
     const [age, setAge] = useState(0);
     const [ageRange, setAgeRange] = useState("");
     const [educationLevel, setEducationLevel] = useState("");
@@ -85,6 +87,12 @@ const SchoolDetails = () => {
     const [schoolChoice, setSchoolChoice] = useState("");
     const [universityChoice, setUniversityChoice] = useState("");
     const [centerChoice, setCenterChoice] = useState("");
+
+    const handleAddStudentSchool = (school) => {
+        if (school?.id) {
+            setSchoolChoice(school.id.toString());
+        }
+    }
 
 
     useEffect(() => {
@@ -102,49 +110,42 @@ const SchoolDetails = () => {
         setFirstname("");
         setMiddleName("");
         setLastName("");
+        setDisability(false);
         setAge("");
         setAgeRange("");
-        setEducationLevel(0);
+        setEducationLevel("");
         setCourseName("");
         setPhone("");
         setEmail("");
-        setGender(0);
-        setSchoolChoice(0);
-        setUniversityChoice(0);
-        setCenterChoice(0);
+        setGender("");
+        setSchoolChoice("");
+        setUniversityChoice("");
+        setCenterChoice("");
         setIsCreateStudentOpen(false);
     };
+
+
 
     const handleAddStudent = () => {
         if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice) {
             alert("Please fill in all required fields");
             return;
         }
+
+        // Prefill schoolChoice with the current school ID
+
+
+
         dispatch(addStudent({
-            first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice,center_id: centerChoice
+            first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
+            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice, center_id: centerChoice
         }))
             .unwrap()
             .then(() => {
                 resetForm();
-
-                setFirstname("");
-                setMiddleName("");
-                setLastName("");
-                setAge("");
-                setAgeRange("");
-                setEducationLevel(0);
-                setCourseName("");
-                setPhone("");
-                setEmail("");
-                setGender(0);
-                setSchoolChoice(0);
-                setUniversityChoice(0);
-                setCenterChoice(0);
-                setIsCreateStudentOpen(false);
                 dispatch(fetchStudents(schoolName));
-
             });
+
     };
 
     const handleEditStudent = (student) => {
@@ -153,6 +154,7 @@ const SchoolDetails = () => {
         setFirstname(student.first_name);
         setMiddleName(student.middle_name);
         setLastName(student.last_name);
+        setDisability(student.disability);
         setAge(student.age);
         setAgeRange(student.age_range);
         setEducationLevel(student.education_level?.id.toString() || "");
@@ -169,26 +171,13 @@ const SchoolDetails = () => {
 
     const handleUpdateStudent = () => {
         dispatch(updateStudent({
-            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice,center_id: centerChoice
+            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
+            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice, center_id: centerChoice
         }))
             .unwrap()
             .then(() => {
                 resetForm();
                 setIsEditStudentOpen(false);
-                setID(0);
-                setFirstname("");
-                setMiddleName("");
-                setLastName("");
-                setAge("");
-                setAgeRange("");
-                setEducationLevel(0);
-                setCourseName("");
-                setPhone("");
-                setEmail("");
-                setGender(0);
-                setSchoolChoice(0);
-                setUniversityChoice(0);
                 dispatch(fetchStudents(schoolName));
             });
         setEditingStudent(null); // Close the dialog after updating
@@ -216,9 +205,6 @@ const SchoolDetails = () => {
                 // setUniversityChoice(0);
                 dispatch(fetchStudents(schoolName));
             });
-
-
-
     };
 
 
@@ -261,7 +247,12 @@ const SchoolDetails = () => {
                 <div className="flex justify-between items-center mt-9">
 
                     <h2 className="text-lg font-semibold">{(students.length).toString()} {students.length <= 1 ? ('Student') : 'Students'}</h2>
-                    <Dialog>
+                    <Dialog open={isCreateStudentOpen} onOpenChange={(open) => {
+                        setIsCreateStudentOpen(open);
+                        if (open && school) {
+                            handleAddStudentSchool(school);
+                        }
+                    }}>
                         <DialogTrigger asChild>
                             <Button className="flex items-center gap-2">
                                 <Plus size={18} />
@@ -294,6 +285,19 @@ const SchoolDetails = () => {
                                 <Input type="text" id="lastname"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Label htmlFor="disability" className="text-sm font-medium">
+                                    Disability (Physical or Psychological)
+                                </Label>
+                                <Input
+                                    type="checkbox"
+                                    id="disability"
+                                    checked={disability}
+                                    onChange={(e) => setDisability(e.target.checked)}
+                                    className="h-4 w-4"
                                 />
                             </div>
 
@@ -384,6 +388,7 @@ const SchoolDetails = () => {
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">School</Label>
                                 <Select
+                                    disabled
                                     value={schoolChoice}
                                     onValueChange={(value) => setSchoolChoice(value)}
                                 >
@@ -405,6 +410,7 @@ const SchoolDetails = () => {
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">University</Label>
                                 <Select
+                                disabled
                                     value={universityChoice}
                                     onValueChange={(value) => setUniversityChoice(value)}
                                 >
@@ -438,6 +444,7 @@ const SchoolDetails = () => {
                             <TableHead>Age</TableHead>
                             {/* <TableHead>Age Range</TableHead> */}
                             <TableHead>Gender</TableHead>
+                            <TableHead>Disabled</TableHead>
                             <TableHead>Education Level</TableHead>
                             <TableHead>Phone</TableHead>
                             <TableHead>Email</TableHead>
@@ -454,223 +461,226 @@ const SchoolDetails = () => {
                                     <TableCell>{student.age}</TableCell>
                                     {/* <TableCell>{school.region.name}</TableCell> */}
                                     <TableCell>{student.gender.name}</TableCell>
+                                    <TableCell>{student.disability ? "Yes" : "No"}</TableCell>
                                     <TableCell>{student.education_level.name}</TableCell>
                                     <TableCell>{student.phone}</TableCell>
                                     <TableCell>{student.email}</TableCell>
                                     <TableCell>{dayjs(student.created_at).format("dddd, MMMM D, YYYY h:mm A")}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center space-x-2">
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Pencil
-                                                        onClick={() => handleEditStudent(student)} // Correctly pass a function
-                                                        size={17}
-                                                        className="cursor-pointer text-black-600"
-                                                    />
-                                                </DialogTrigger>
-                                                {/* Edit Dialog */}
-                                                <DialogContent open={isEditStudentOpen} onOpenChange={(open) => {
-                                                    setIsEditOpen(open);
-                                                    if (!open) {
-                                                        resetForm(); // Reset form when closing edit dialog
-                                                        setEditingStudent(null);
-                                                    }
-                                                }}>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Edit Student Information</DialogTitle>
-                                                    </DialogHeader>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="firstname">Firstname</Label>
-                                                        <Input
-                                                            type="text"
-                                                            id="firstname"
-                                                            value={firstName}
-                                                            onChange={(e) => setFirstname(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="firstname">Middlename</Label>
-                                                        <Input
-                                                            type="text"
-                                                            id="middlename"
-                                                            value={middleName}
-                                                            onChange={(e) => setMiddleName(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="firstname">Lastname</Label>
-                                                        <Input
-                                                            type="text"
-                                                            id="lastname"
-                                                            value={lastName}
-                                                            onChange={(e) => setLastName(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="age">Age</Label>
-                                                        <Input type="number" id="age"
-                                                            value={age}
-                                                            onChange={(e) => setAge(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="age-range">Age range</Label>
-                                                        <Input type="text" id="age-range"
-                                                            value={ageRange}
-                                                            onChange={(e) => setAgeRange(e.target.value)}
-                                                        />
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">Educational Level</Label>
-                                                        <Select
-                                                            value={educationLevel}
-                                                            onValueChange={(value) => setEducationLevel(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select Education Level" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(educationLevels) && educationLevels.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="course">Course name</Label>
-                                                        <Input type="text" id="course"
-                                                            value={courseName}
-                                                            onChange={(e) => setCourseName(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="phone">Phone</Label>
-                                                        <Input type="text" id="phone"
-                                                            value={phone}
-                                                            onChange={(e) => setPhone(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="email">Email</Label>
-                                                        <Input type="text" id="email"
-                                                            value={email}
-                                                            onChange={(e) => setEmail(e.target.value)}
-                                                        />
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">Gender</Label>
-                                                        <Select
-                                                            value={genderChoice}
-                                                            onValueChange={(value) => setGender(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select Gender" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(genders) && genders.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">School</Label>
-                                                        <Select
-                                                            value={schoolChoice}
-                                                            onValueChange={(value) => setSchoolChoice(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select School" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(schools) && schools.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">University</Label>
-                                                        <Select
-                                                            value={universityChoice}
-                                                            onValueChange={(value) => setUniversityChoice(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select University" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(universities) && universities.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-
-                                                    <Button onClick={handleUpdateStudent}>Update</Button>
-                                                </DialogContent>
-                                            </Dialog>
-
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Trash2
-                                                        onClick={() => handleDeleteClick(student)} // Correctly pass a function
-                                                        size={17}
-                                                        className="cursor-pointer text-black-600"
-                                                    />
-                                                </DialogTrigger>
-
-                                                {/* Delete Dialog */}
-                                                <DialogContent onClose={() => setIsDeleteStudentOpen(null)}>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Delete school Information</DialogTitle>
-                                                        <h3>This action will permanently erase <b>{firstName + ' ' + middleName + ' ' + lastName}</b> from the database</h3>
-                                                    </DialogHeader>
-                                                    <Button variant="destructive" onClick={handleDeleteStudent}>Delete</Button>
-                                                </DialogContent>
-                                            </Dialog>
-
-
-
-
+                                            <Pencil
+                                                onClick={() => handleEditStudent(student)}
+                                                size={17}
+                                                className="cursor-pointer text-black-600"
+                                            />
+                                            <Trash2
+                                                onClick={() => handleDeleteClick(student)}
+                                                size={17}
+                                                className="cursor-pointer text-black-600"
+                                            />
                                         </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
                     </TableBody>
                 </Table>
+
+                {/* Edit Student Dialog */}
+                <Dialog open={isEditStudentOpen} onOpenChange={(open) => {
+                    setIsEditStudentOpen(open);
+                    if (!open) {
+                        resetForm();
+                        setEditingStudent(null);
+                    }
+                }}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Edit Student Information</DialogTitle>
+                        </DialogHeader>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-firstname">Firstname</Label>
+                            <Input
+                                type="text"
+                                id="edit-firstname"
+                                value={firstName}
+                                onChange={(e) => setFirstname(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-middlename">Middlename</Label>
+                            <Input
+                                type="text"
+                                id="edit-middlename"
+                                value={middleName}
+                                onChange={(e) => setMiddleName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-lastname">Lastname</Label>
+                            <Input
+                                type="text"
+                                id="edit-lastname"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="edit-disability" className="text-sm font-medium">
+                                Disability (Physical or Psychological)
+                            </Label>
+                            <Input
+                                type="checkbox"
+                                id="edit-disability"
+                                checked={disability}
+                                onChange={(e) => setDisability(e.target.checked)}
+                                className="h-4 w-4"
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-age">Age</Label>
+                            <Input type="number" id="edit-age"
+                                value={age}
+                                onChange={(e) => setAge(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-age-range">Age range</Label>
+                            <Input type="text" id="edit-age-range"
+                                value={ageRange}
+                                onChange={(e) => setAgeRange(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-education-level">Educational Level</Label>
+                            <Select
+                                value={educationLevel}
+                                onValueChange={(value) => setEducationLevel(value)}
+                            >
+                                <SelectTrigger className="w-full max-w">
+                                    <SelectValue placeholder="Select Education Level" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(educationLevels) && educationLevels.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-course">Course name</Label>
+                            <Input type="text" id="edit-course"
+                                value={courseName}
+                                onChange={(e) => setCourseName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-phone">Phone</Label>
+                            <Input type="text" id="edit-phone"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-email">Email</Label>
+                            <Input type="text" id="edit-email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-gender">Gender</Label>
+                            <Select
+                                value={genderChoice}
+                                onValueChange={(value) => setGender(value)}
+                            >
+                                <SelectTrigger className="w-full max-w">
+                                    <SelectValue placeholder="Select Gender" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(genders) && genders.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-school">School</Label>
+                            <Select
+                                disabled
+                                value={schoolChoice}
+                                onValueChange={(value) => setSchoolChoice(value)}
+                            >
+                                <SelectTrigger className="w-full max-w">
+                                    <SelectValue placeholder="Select School" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(schools) && schools.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-university">University</Label>
+                            <Select
+                            disabled
+                                value={universityChoice}
+                                onValueChange={(value) => setUniversityChoice(value)}
+                            >
+                                <SelectTrigger className="w-full max-w">
+                                    <SelectValue placeholder="Select University" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(universities) && universities.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <Button onClick={handleUpdateStudent}>Update</Button>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Delete Student Dialog */}
+                <Dialog open={isDeleteStudentOpen} onOpenChange={setIsDeleteStudentOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete School Information</DialogTitle>
+                            <h3>This action will permanently erase <b>{firstName + ' ' + middleName + ' ' + lastName}</b> from the database</h3>
+                        </DialogHeader>
+                        <Button variant="destructive" onClick={handleDeleteStudent}>Delete</Button>
+                    </DialogContent>
+                </Dialog>
 
 
 

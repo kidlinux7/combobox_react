@@ -430,6 +430,20 @@ const Volunteers = () => {
                                                         />
                                                     </div>
 
+
+                                                    <div className="flex items-center gap-2">
+                                                        <Label htmlFor="disability" className="text-sm font-medium">
+                                                            Disability (Physical or Psychological)
+                                                        </Label>
+                                                        <Input
+                                                            type="checkbox"
+                                                            id="disability"
+                                                            checked={disability}
+                                                            onChange={(e) => setDisability(e.target.checked)}
+                                                            className="h-4 w-4"
+                                                        />
+                                                    </div>
+
                                                     <div className="grid w-full max-w items-center gap-1.5">
                                                         <Label htmlFor="age">Age</Label>
                                                         <Input type="number" id="age"
