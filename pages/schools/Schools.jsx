@@ -54,6 +54,10 @@ const Schools = () => {
     const [institutionType, setInstitutionType] = useState("");
     const [region, setRegion] = useState("");
     const [toilets, setToilets] = useState("");
+    const [focal_fullname, setFocalFullname] = useState("");
+    const [focal_phone, setFocalPhone] = useState("");
+    const [focal_email, setFocalEmail] = useState("");
+
     const [libraries, setLibraries] = useState("");
     const [computers, setComputers] = useState("");
     const [water_reserves, setWaterReserves] = useState("");
@@ -70,6 +74,9 @@ const Schools = () => {
         setInstitutionType("");
         setRegion("");
         setToilets("");
+        setFocalFullname("");
+        setFocalPhone("");
+        setFocalEmail("");
         setLibraries("");
         setComputers("");
         setWaterReserves("");
@@ -86,6 +93,9 @@ const Schools = () => {
             type_id: Number(institutionType), 
             region_id: Number(region), 
             toilets: Number(toilets) || 0, 
+            focal_fullname: focal_fullname, 
+            focal_phone: focal_phone, 
+            focal_email: focal_email, 
             computers: Number(computers) || 0, 
             libraries: Number(libraries) || 0, 
             water_reserves: Number(water_reserves) || 0 
@@ -108,6 +118,9 @@ const Schools = () => {
         setInstitutionType(school.type?.id?.toString() || "");
         setRegion(school.region?.id?.toString() || "");
         setToilets(school.toilets?.toString() || "");
+        setFocalFullname(school.focal_fullname || "");
+        setFocalPhone(school.focal_phone || "");
+        setFocalEmail(school.focal_email || "");
         setLibraries(school.libraries?.toString() || "");
         setComputers(school.computers?.toString() || "");
         setWaterReserves(school.water_reserves?.toString() || "");
@@ -126,6 +139,9 @@ const Schools = () => {
             type_id: Number(institutionType), 
             region_id: Number(region), 
             toilets: Number(toilets) || 0, 
+            focal_fullname: focal_fullname, 
+            focal_phone: focal_phone, 
+            focal_email: focal_email, 
             computers: Number(computers) || 0, 
             libraries: Number(libraries) || 0, 
             water_reserves: Number(water_reserves) || 0 
@@ -278,6 +294,36 @@ const Schools = () => {
                                     id="create-water"
                                     value={water_reserves}
                                     onChange={(e) => setWaterReserves(e.target.value)}
+                                />
+                            </div>
+
+                                 <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="create-focal-fullname">Focal Fullname</Label>
+                                <Input 
+                                    type="text" 
+                                    id="create-focal-fullname"
+                                    value={focal_fullname}
+                                    onChange={(e) => setFocalFullname(e.target.value)}
+                                />
+                            </div>
+
+                                 <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="create-focal-phone">Focal Phone</Label>
+                                <Input 
+                                    type="number" 
+                                    id="create-focal-phone"
+                                    value={focal_phone}
+                                    onChange={(e) => setFocalPhone(e.target.value)}
+                                />
+                            </div>
+
+                                 <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="create-focal-email">Focal Email</Label>
+                                <Input 
+                                    type="email" 
+                                    id="create-focal-email"
+                                    value={focal_email}
+                                    onChange={(e) => setFocalEmail(e.target.value)}
                                 />
                             </div>
 
@@ -442,6 +488,36 @@ const Schools = () => {
                                 id="edit-water"
                                 value={water_reserves}
                                 onChange={(e) => setWaterReserves(e.target.value)}
+                            />
+                        </div>
+
+                                <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-focal-fullname">Focal Fullname</Label>
+                            <Input 
+                                type="text" 
+                                id="edit-focal-fullname"
+                                value={focal_fullname}
+                                onChange={(e) => setFocalFullname(e.target.value)}
+                            />
+                        </div>
+
+                                <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-focal-phone">Focal Phone</Label>
+                            <Input 
+                                type="number" 
+                                id="edit-focal-phone"
+                                value={focal_phone}
+                                onChange={(e) => setFocalPhone(e.target.value)}
+                            />
+                        </div>
+
+                                <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-focal-email">Focal Email</Label>
+                            <Input 
+                                type="email" 
+                                id="edit-focal-email"
+                                value={focal_email}
+                                onChange={(e) => setFocalEmail(e.target.value)}
                             />
                         </div>
 

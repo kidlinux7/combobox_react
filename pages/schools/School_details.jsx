@@ -83,6 +83,7 @@ const SchoolDetails = () => {
     const [courseName, setCourseName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
+
     const [genderChoice, setGender] = useState("");
     const [schoolChoice, setSchoolChoice] = useState("");
     const [universityChoice, setUniversityChoice] = useState("");
@@ -241,6 +242,9 @@ const SchoolDetails = () => {
                     <h1><strong>Libraries: </strong>{school.libraries}</h1><br></br>
                     <h1><strong>Water Reserves: </strong>{school.water_reserves}</h1><br></br>
                     <h1><strong>Toilets: </strong>{school.toilets}</h1><br></br>
+                    <h1><strong>Focal Person: </strong>{school.focal_fullname}</h1><br></br>
+                    <h1><strong>Focal Phone: </strong>{school.focal_phone}</h1><br></br>
+                    <h1><strong>Focal Email: </strong>{school.focal_email}</h1><br></br>
                     <h1><strong>Date created: </strong>{dayjs(school.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
                 </div>
                 {/* Teachers section */}
@@ -410,7 +414,7 @@ const SchoolDetails = () => {
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">University</Label>
                                 <Select
-                                disabled
+                                    disabled
                                     value={universityChoice}
                                     onValueChange={(value) => setUniversityChoice(value)}
                                 >
