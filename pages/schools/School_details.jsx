@@ -235,18 +235,50 @@ const SchoolDetails = () => {
                     {/* Create school */}
                 </div>
 
-                <div className="flex items-center gap-2 mt-3 mb-3">
-                    <h1><strong>Type: </strong>{school.type.name}</h1><br></br>
-                    <h1><strong>Region: </strong>{school.region.name}</h1><br></br>
-                    <h1><strong>Computers: </strong>{school.computers}</h1><br></br>
-                    <h1><strong>Libraries: </strong>{school.libraries}</h1><br></br>
-                    <h1><strong>Water Reserves: </strong>{school.water_reserves}</h1><br></br>
-                    <h1><strong>Toilets: </strong>{school.toilets}</h1><br></br>
-                    <h1><strong>Focal Person: </strong>{school.focal_fullname}</h1><br></br>
-                    <h1><strong>Focal Phone: </strong>{school.focal_phone}</h1><br></br>
-                    <h1><strong>Focal Email: </strong>{school.focal_email}</h1><br></br>
-                    <h1><strong>Date created: </strong>{dayjs(school.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mt-4 mb-8 text-sm border-b pb-6">
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Type:</span>
+                        <span className="font-semibold">{school.type.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Region:</span>
+                        <span className="font-semibold">{school.region.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Computers:</span>
+                        <span className="font-semibold">{school.computers}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Libraries:</span>
+                        <span className="font-semibold">{school.libraries}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Water Reserves:</span>
+                        <span className="font-semibold">{school.water_reserves}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Toilets:</span>
+                        <span className="font-semibold">{school.toilets}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Person:</span>
+                        <span className="font-semibold">{school.focal_person_fullname}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Phone:</span>
+                        <span className="font-semibold">{school.focal_person_phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Email:</span>
+                        <span className="font-semibold">{school.focal_person_email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1 md:pt-0">
+                        <span className="text-gray-400 text-xs italic">
+                            Created: {dayjs(school.created_at).format("MMMM D, YYYY")}
+                        </span>
+                    </div>
                 </div>
+
                 {/* Teachers section */}
                 <div className="flex justify-between items-center mt-9">
 
@@ -652,7 +684,7 @@ const SchoolDetails = () => {
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-university">University</Label>
                             <Select
-                            disabled
+                                disabled
                                 value={universityChoice}
                                 onValueChange={(value) => setUniversityChoice(value)}
                             >
