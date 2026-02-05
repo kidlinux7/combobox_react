@@ -56,6 +56,9 @@ const Universities = () => {
     const [libraries, setLibraries] = useState("");
     const [computers, setComputers] = useState("");
     const [water_reserves, setWaterReserves] = useState("");
+    const [focal_person_fullname, setFocalFullname] = useState("");
+    const [focal_person_phone, setFocalPhone] = useState("");
+    const [focal_person_email, setFocalEmail] = useState("");
 
     useEffect(() => {
         dispatch(fetchUniversities());
@@ -72,6 +75,9 @@ const Universities = () => {
         setLibraries("");
         setComputers("");
         setWaterReserves("");
+        setFocalFullname("");
+        setFocalPhone("");
+        setFocalEmail("");
     };
 
     const handleAddUniversity = () => {
@@ -87,7 +93,10 @@ const Universities = () => {
             toilets: Number(toilets) || 0, 
             computers: Number(computers) || 0, 
             libraries: Number(libraries) || 0, 
-            water_reserves: Number(water_reserves) || 0 
+            water_reserves: Number(water_reserves) || 0,
+            focal_person_fullname: focal_person_fullname,
+            focal_person_phone: focal_person_phone,
+            focal_person_email: focal_person_email 
         }))
             .unwrap()
             .then(() => {
@@ -110,6 +119,9 @@ const Universities = () => {
         setLibraries(university.libraries?.toString() || "");
         setComputers(university.computers?.toString() || "");
         setWaterReserves(university.water_reserves?.toString() || "");
+        setFocalFullname(university.focal_person_fullname || "");
+        setFocalPhone(university.focal_person_phone || "");
+        setFocalEmail(university.focal_person_email || "");
         setIsEditOpen(true);
     };
 
@@ -127,7 +139,10 @@ const Universities = () => {
             toilets: Number(toilets) || 0, 
             computers: Number(computers) || 0, 
             libraries: Number(libraries) || 0, 
-            water_reserves: Number(water_reserves) || 0 
+            water_reserves: Number(water_reserves) || 0,
+            focal_person_fullname: focal_person_fullname,
+            focal_person_phone: focal_person_phone,
+            focal_person_email: focal_person_email 
         }))
             .unwrap()
             .then(() => {
@@ -277,6 +292,36 @@ const Universities = () => {
                                     id="create-water"
                                     value={water_reserves}
                                     onChange={(e) => setWaterReserves(e.target.value)}
+                                />
+                            </div>
+
+                                                        <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="create-focal-fullname">Focal Fullname</Label>
+                                <Input
+                                    type="text"
+                                    id="create-focal-fullname"
+                                    value={focal_person_fullname}
+                                    onChange={(e) => setFocalFullname(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="create-focal-phone">Focal Phone</Label>
+                                <Input
+                                    type="number"
+                                    id="create-focal-phone"
+                                    value={focal_person_phone}
+                                    onChange={(e) => setFocalPhone(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="grid w-full max-w items-center gap-1.5">
+                                <Label htmlFor="create-focal-email">Focal Email</Label>
+                                <Input
+                                    type="email"
+                                    id="create-focal-email"
+                                    value={focal_person_email}
+                                    onChange={(e) => setFocalEmail(e.target.value)}
                                 />
                             </div>
 
@@ -441,6 +486,36 @@ const Universities = () => {
                                 id="edit-water"
                                 value={water_reserves}
                                 onChange={(e) => setWaterReserves(e.target.value)}
+                            />
+                        </div>
+
+                                                <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-focal-fullname">Focal Fullname</Label>
+                            <Input
+                                type="text"
+                                id="edit-focal-fullname"
+                                value={focal_person_fullname}
+                                onChange={(e) => setFocalFullname(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-focal-phone">Focal Phone</Label>
+                            <Input
+                                type="number"
+                                id="edit-focal-phone"
+                                value={focal_person_phone}
+                                onChange={(e) => setFocalPhone(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-focal-email">Focal Email</Label>
+                            <Input
+                                type="email"
+                                id="edit-focal-email"
+                                value={focal_person_email}
+                                onChange={(e) => setFocalEmail(e.target.value)}
                             />
                         </div>
 

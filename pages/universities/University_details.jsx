@@ -68,11 +68,18 @@ const UniversityDetails = () => {
     const [editingschool, setEditingschool] = useState(null); // Track the school you're editing
 
 
+    const handleAddStudentUniversity = (university) => {
+        if (university?.id) {
+            setUniversityChoice(university.id.toString());
+        }
+    }
+
     // Student/Teachers form states
     const [id, setID] = useState(0);
     const [firstName, setFirstname] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [disability, setDisability] = useState(false);
     const [age, setAge] = useState(0);
     const [ageRange, setAgeRange] = useState("");
     const [educationLevel, setEducationLevel] = useState("");
@@ -82,6 +89,7 @@ const UniversityDetails = () => {
     const [genderChoice, setGender] = useState("");
     const [schoolChoice, setSchoolChoice] = useState("");
     const [universityChoice, setUniversityChoice] = useState("");
+    const [centerChoice, setCenterChoice] = useState("");
 
     useEffect(() => {
         dispatch(fetchUniversities());
@@ -107,17 +115,18 @@ const UniversityDetails = () => {
         setGender(0);
         setSchoolChoice("");
         setUniversityChoice(0);
+        setCenterChoice("");
         setIsCreateStudentOpen(false);
     };
 
     const handleAddStudent = () => {
-        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice ) {
+        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice) {
             alert("Please fill in all required fields");
             return;
         }
         dispatch(addStudent({
-            first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice
+            first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
+            education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice, center_id: centerChoice
         }))
             .unwrap()
             .then(() => {
@@ -126,6 +135,7 @@ const UniversityDetails = () => {
                 setFirstname("");
                 setMiddleName("");
                 setLastName("");
+                setDisability(false);
                 setAge("");
                 setAgeRange("");
                 setEducationLevel(0);
@@ -135,6 +145,7 @@ const UniversityDetails = () => {
                 setGender(0);
                 setSchoolChoice("");
                 setUniversityChoice(0);
+                setCenterChoice(0);
                 setIsCreateStudentOpen(false);
                 dispatch(fetchStudents(universityName));
 
@@ -147,6 +158,7 @@ const UniversityDetails = () => {
         setFirstname(student.first_name);
         setMiddleName(student.middle_name);
         setLastName(student.last_name);
+        setDisability(student.disability);
         setAge(student.age);
         setAgeRange(student.age_range);
         setEducationLevel(student.education_level?.id.toString() || "");
@@ -156,13 +168,14 @@ const UniversityDetails = () => {
         setGender(student.gender?.id.toString() || "");
         setSchoolChoice(student.school?.id.toString() || "");
         setUniversityChoice(student.university?.id.toString() || "");
+        setCenterChoice(student.center?.id.toString() || "");
         setIsEditStudentOpen(true);
     };
 
     const handleUpdateStudent = () => {
         dispatch(updateStudent({
-            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
-            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice
+            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
+            education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice, center_id: centerChoice
         }))
             .unwrap()
             .then(() => {
@@ -172,6 +185,7 @@ const UniversityDetails = () => {
                 setFirstname("");
                 setMiddleName("");
                 setLastName("");
+                setDisability(false);
                 setAge("");
                 setAgeRange("");
                 setEducationLevel(0);
@@ -183,7 +197,7 @@ const UniversityDetails = () => {
                 setUniversityChoice(0);
                 dispatch(fetchStudents(universityName));
             });
-        console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, universityChoice });
+        // console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, universityChoice });
         setEditingStudent(null); // Close the dialog after updating
     };
 
@@ -241,20 +255,63 @@ const UniversityDetails = () => {
                     {/* Create university */}
                 </div>
 
-                <div className="flex items-center gap-2 mt-3 mb-3">
-                    <h1><strong>Type: </strong>{university.type.name}</h1><br></br>
-                    <h1><strong>Region: </strong>{university.region.name}</h1><br></br>
-                    <h1><strong>Computers: </strong>{university.computers}</h1><br></br>
-                    <h1><strong>Libraries: </strong>{university.libraries}</h1><br></br>
-                    <h1><strong>Water Reserves: </strong>{university.water_reserves}</h1><br></br>
-                    <h1><strong>Toilets: </strong>{university.toilets}</h1><br></br>
-                    <h1><strong>Date created: </strong>{dayjs(university.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mt-4 mb-8 text-sm border-b pb-6">
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Type:</span>
+                        <span className="font-semibold">{university.type.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Region:</span>
+                        <span className="font-semibold">{university.region.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Computers:</span>
+                        <span className="font-semibold">{university.computers}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Libraries:</span>
+                        <span className="font-semibold">{university.libraries}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Water Reserves:</span>
+                        <span className="font-semibold">{university.water_reserves}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Toilets:</span>
+                        <span className="font-semibold">{university.toilets}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Person:</span>
+                        <span className="font-semibold">{university.focal_person_fullname}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Phone:</span>
+                        <span className="font-semibold">{university.focal_person_phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Email:</span>
+                        <span className="font-semibold">{university.focal_person_email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1 md:pt-0">
+                        <span className="text-gray-400 text-xs italic">
+                            Created: {dayjs(university.created_at).format("MMMM D, YYYY")}
+                        </span>
+                    </div>
                 </div>
                 {/* Teachers section */}
                 <div className="flex justify-between items-center mt-9">
 
                     <h2 className="text-lg font-semibold">{(students.length).toString()} {students.length <= 1 ? ('Student') : 'Students'}</h2>
-                    <Dialog>
+                    <Dialog
+
+                        open={isCreateStudentOpen} onOpenChange={(open) => {
+                            setIsCreateStudentOpen(open);
+                            if (open && university) {
+                                handleAddStudentUniversity(university);
+                            }
+                        }}
+
+                    >
                         <DialogTrigger asChild>
                             <Button className="flex items-center gap-2">
                                 <Plus size={18} />
@@ -287,6 +344,19 @@ const UniversityDetails = () => {
                                 <Input type="text" id="lastname"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Label htmlFor="disability" className="text-sm font-medium">
+                                    Disability (Physical or Psychological)
+                                </Label>
+                                <Input
+                                    type="checkbox"
+                                    id="disability"
+                                    checked={disability}
+                                    onChange={(e) => setDisability(e.target.checked)}
+                                    className="h-4 w-4"
                                 />
                             </div>
 
@@ -398,6 +468,7 @@ const UniversityDetails = () => {
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">University</Label>
                                 <Select
+                                    disabled
                                     value={universityChoice}
                                     onValueChange={(value) => setUniversityChoice(value)}
                                 >
@@ -453,7 +524,17 @@ const UniversityDetails = () => {
                                     <TableCell>{dayjs(student.created_at).format("dddd, MMMM D, YYYY h:mm A")}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center space-x-2">
-                                            <Dialog>
+                                            <Dialog
+
+                                                open={isEditStudentOpen} onOpenChange={(open) => {
+                                                    setIsEditStudentOpen(open);
+
+                                                    if (!open) {
+                                                        resetForm();
+                                                        setEditingStudent(null);
+                                                    }
+                                                }}
+                                            >
                                                 <DialogTrigger>
                                                     <Pencil
                                                         onClick={() => handleEditStudent(student)} // Correctly pass a function
@@ -500,6 +581,19 @@ const UniversityDetails = () => {
                                                             id="lastname"
                                                             value={lastName}
                                                             onChange={(e) => setLastName(e.target.value)}
+                                                        />
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <Label htmlFor="disability" className="text-sm font-medium">
+                                                            Disability (Physical or Psychological)
+                                                        </Label>
+                                                        <Input
+                                                            type="checkbox"
+                                                            id="disability"
+                                                            checked={disability}
+                                                            onChange={(e) => setDisability(e.target.checked)}
+                                                            className="h-4 w-4"
                                                         />
                                                     </div>
 
@@ -613,6 +707,7 @@ const UniversityDetails = () => {
                                                     <div className="grid w-full max-w items-center gap-1.5">
                                                         <Label htmlFor="education-level">University</Label>
                                                         <Select
+                                                            disabled
                                                             value={universityChoice}
                                                             onValueChange={(value) => setUniversityChoice(value)}
                                                         >

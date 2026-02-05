@@ -114,14 +114,14 @@ const SchoolDetails = () => {
         setDisability(false);
         setAge("");
         setAgeRange("");
-        setEducationLevel("");
+        setEducationLevel(0);
         setCourseName("");
         setPhone("");
         setEmail("");
-        setGender("");
+        setGender(0);
         setSchoolChoice("");
-        setUniversityChoice("");
-        setCenterChoice("");
+        setUniversityChoice(0);
+        setCenterChoice(0);
         setIsCreateStudentOpen(false);
     };
 
@@ -134,9 +134,6 @@ const SchoolDetails = () => {
         }
 
         // Prefill schoolChoice with the current school ID
-
-
-
         dispatch(addStudent({
             first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
             education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, university_id: universityChoice, center_id: centerChoice
@@ -144,6 +141,22 @@ const SchoolDetails = () => {
             .unwrap()
             .then(() => {
                 resetForm();
+
+                setFirstname("");
+                setMiddleName("");
+                setLastName("");
+                setDisability(false);
+                setAge("");
+                setAgeRange("");
+                setEducationLevel(0);
+                setCourseName("");
+                setPhone("");
+                setEmail("");
+                setGender(0);
+                setSchoolChoice("");
+                setUniversityChoice(0);
+                setIsCreateStudentOpen(false);
+
                 dispatch(fetchStudents(schoolName));
             });
 
@@ -283,12 +296,16 @@ const SchoolDetails = () => {
                 <div className="flex justify-between items-center mt-9">
 
                     <h2 className="text-lg font-semibold">{(students.length).toString()} {students.length <= 1 ? ('Student') : 'Students'}</h2>
-                    <Dialog open={isCreateStudentOpen} onOpenChange={(open) => {
-                        setIsCreateStudentOpen(open);
-                        if (open && school) {
-                            handleAddStudentSchool(school);
-                        }
-                    }}>
+                    <Dialog
+
+                        open={isCreateStudentOpen} onOpenChange={(open) => {
+                            setIsCreateStudentOpen(open);
+                            if (open && school) {
+                                handleAddStudentSchool(school);
+                            }
+                        }}
+
+                    >
                         <DialogTrigger asChild>
                             <Button className="flex items-center gap-2">
                                 <Plus size={18} />
@@ -522,13 +539,16 @@ const SchoolDetails = () => {
                 </Table>
 
                 {/* Edit Student Dialog */}
-                <Dialog open={isEditStudentOpen} onOpenChange={(open) => {
+                <Dialog 
+                open={isEditStudentOpen} onOpenChange={(open) => {
                     setIsEditStudentOpen(open);
                     if (!open) {
                         resetForm();
                         setEditingStudent(null);
                     }
-                }}>
+                }}
+                
+                >
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Edit Student Information</DialogTitle>

@@ -72,6 +72,7 @@ const CenterDetails = () => {
     const [firstName, setFirstname] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [disability, setDisability] = useState(false);
     const [age, setAge] = useState(0);
     const [ageRange, setAgeRange] = useState("");
     const [educationLevel, setEducationLevel] = useState("");
@@ -82,6 +83,14 @@ const CenterDetails = () => {
     const [schoolChoice, setSchoolChoice] = useState("");
     const [centerChoice, setCenterChoice] = useState("");
     const [universityChoice, setUniversityChoice] = useState("");
+
+
+    const handleAddStudentCenter = (center) => {
+        if (center?.id) {
+            setCenterChoice(center.id.toString());
+        }
+    }
+
 
     useEffect(() => {
         dispatch(fetchCenters());
@@ -98,6 +107,7 @@ const CenterDetails = () => {
         setFirstname("");
         setMiddleName("");
         setLastName("");
+        setDisability(false);
         setAge("");
         setAgeRange("");
         setEducationLevel(0);
@@ -112,12 +122,12 @@ const CenterDetails = () => {
     };
 
     const handleAddStudent = () => {
-        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice ) {
+        if (!firstName.trim() || !lastName || !middleName || !age || !genderChoice) {
             alert("Please fill in all required fields");
             return;
         }
         dispatch(addStudent({
-            first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
+            first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
             education_level_id: Number(educationLevel), course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, center_id: centerChoice, university_id: universityChoice
         }))
             .unwrap()
@@ -127,6 +137,7 @@ const CenterDetails = () => {
                 setFirstname("");
                 setMiddleName("");
                 setLastName("");
+                setDisability(false);
                 setAge("");
                 setAgeRange("");
                 setEducationLevel(0);
@@ -149,6 +160,7 @@ const CenterDetails = () => {
         setFirstname(student.first_name);
         setMiddleName(student.middle_name);
         setLastName(student.last_name);
+        setDisability(student.disability);
         setAge(student.age);
         setAgeRange(student.age_range);
         setEducationLevel(student.education_level?.id.toString() || "");
@@ -164,17 +176,19 @@ const CenterDetails = () => {
 
     const handleUpdateStudent = () => {
         dispatch(updateStudent({
-            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, age_range: ageRange,
+            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, disability: disability, age: age, age_range: ageRange,
             education_level: educationLevel, course_name: courseName, phone: phone, email: email, gender_id: genderChoice, school_id: schoolChoice, center_id: centerChoice, university_id: universityChoice
         }))
             .unwrap()
             .then(() => {
                 resetForm();
                 setIsEditStudentOpen(false);
+
                 setID(0);
                 setFirstname("");
                 setMiddleName("");
                 setLastName("");
+                setDisability(false);
                 setAge("");
                 setAgeRange("");
                 setEducationLevel(0);
@@ -187,7 +201,7 @@ const CenterDetails = () => {
                 setCenterChoice(0);
                 dispatch(fetchStudents(centerName));
             });
-        console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, centerChoice,universityChoice });
+        // console.log("Update Student:", { id, firstName, middleName, lastName, age, ageRange, educationLevel, courseName, phone, email, genderChoice, schoolChoice, centerChoice,universityChoice });
         setEditingStudent(null); // Close the dialog after updating
     };
 
@@ -245,20 +259,66 @@ const CenterDetails = () => {
                     {/* Create center */}
                 </div>
 
-                <div className="flex items-center gap-2 mt-3 mb-3">
-                    <h1><strong>Type: </strong>{center.type.name}</h1><br></br>
-                    <h1><strong>Region: </strong>{center.region.name}</h1><br></br>
-                    <h1><strong>Computers: </strong>{center.computers}</h1><br></br>
-                    <h1><strong>Libraries: </strong>{center.libraries}</h1><br></br>
-                    <h1><strong>Water Reserves: </strong>{center.water_reserves}</h1><br></br>
-                    <h1><strong>Toilets: </strong>{center.toilets}</h1><br></br>
-                    <h1><strong>Date created: </strong>{dayjs(center.created_at).format("dddd, MMMM D, YYYY h:mm A")}</h1>
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mt-4 mb-8 text-sm border-b pb-6">
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Type:</span>
+                        <span className="font-semibold">{center.type.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Region:</span>
+                        <span className="font-semibold">{center.region.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Computers:</span>
+                        <span className="font-semibold">{center.computers}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Libraries:</span>
+                        <span className="font-semibold">{center.libraries}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Water Reserves:</span>
+                        <span className="font-semibold">{center.water_reserves}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Toilets:</span>
+                        <span className="font-semibold">{center.toilets}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Person:</span>
+                        <span className="font-semibold">{center.focal_person_fullname}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Phone:</span>
+                        <span className="font-semibold">{center.focal_person_phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">Focal Email:</span>
+                        <span className="font-semibold">{center.focal_person_email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1 md:pt-0">
+                        <span className="text-gray-400 text-xs italic">
+                            Created: {dayjs(center.created_at).format("MMMM D, YYYY")}
+                        </span>
+                    </div>
                 </div>
+
                 {/* Teachers section */}
                 <div className="flex justify-between items-center mt-9">
 
                     <h2 className="text-lg font-semibold">{(students.length).toString()} {students.length <= 1 ? ('Student') : 'Students'}</h2>
-                    <Dialog>
+                    <Dialog
+
+
+                        open={isCreateStudentOpen} onOpenChange={(open) => {
+                            setIsCreateStudentOpen(open);
+                            if (open && center) {
+                                handleAddStudentCenter(center);
+                            }
+                        }}
+
+
+                    >
                         <DialogTrigger asChild>
                             <Button className="flex items-center gap-2">
                                 <Plus size={18} />
@@ -291,6 +351,19 @@ const CenterDetails = () => {
                                 <Input type="text" id="lastname"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Label htmlFor="disability" className="text-sm font-medium">
+                                    Disability (Physical or Psychological)
+                                </Label>
+                                <Input
+                                    type="checkbox"
+                                    id="disability"
+                                    checked={disability}
+                                    onChange={(e) => setDisability(e.target.checked)}
+                                    className="h-4 w-4"
                                 />
                             </div>
 
@@ -402,6 +475,7 @@ const CenterDetails = () => {
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">Center</Label>
                                 <Select
+                                    disabled
                                     value={centerChoice}
                                     onValueChange={(value) => setCenterChoice(value)}
                                 >
@@ -457,7 +531,16 @@ const CenterDetails = () => {
                                     <TableCell>{dayjs(student.created_at).format("dddd, MMMM D, YYYY h:mm A")}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center space-x-2">
-                                            <Dialog>
+                                            <Dialog
+                                                open={isEditStudentOpen} onOpenChange={(open) => {
+                                                    setIsEditStudentOpen(open);
+                                                    if (!open) {
+                                                        resetForm();
+                                                        setEditingStudent(null);
+                                                    }
+                                                }}
+
+                                            >
                                                 <DialogTrigger>
                                                     <Pencil
                                                         onClick={() => handleEditStudent(student)} // Correctly pass a function
@@ -504,6 +587,19 @@ const CenterDetails = () => {
                                                             id="lastname"
                                                             value={lastName}
                                                             onChange={(e) => setLastName(e.target.value)}
+                                                        />
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <Label htmlFor="disability" className="text-sm font-medium">
+                                                            Disability (Physical or Psychological)
+                                                        </Label>
+                                                        <Input
+                                                            type="checkbox"
+                                                            id="disability"
+                                                            checked={disability}
+                                                            onChange={(e) => setDisability(e.target.checked)}
+                                                            className="h-4 w-4"
                                                         />
                                                     </div>
 
@@ -617,6 +713,7 @@ const CenterDetails = () => {
                                                     <div className="grid w-full max-w items-center gap-1.5">
                                                         <Label htmlFor="education-level">Center</Label>
                                                         <Select
+                                                            disabled
                                                             value={centerChoice}
                                                             onValueChange={(value) => setCenterChoice(value)}
                                                         >

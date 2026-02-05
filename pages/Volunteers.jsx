@@ -64,6 +64,7 @@ const Volunteers = () => {
     const [firstName, setFirstname] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [disability, setDisability] = useState(false);
     const [age, setAge] = useState(0);
     const [volunteerNationality, setNationality] = useState("");
     const [educationLevel, setEducationLevel] = useState("");
@@ -87,6 +88,7 @@ const Volunteers = () => {
         setFirstname("");
         setMiddleName("");
         setLastName("");
+        setDisability(false);
         setAge("");
         setNationality("")
         setEducationLevel(0);
@@ -95,7 +97,7 @@ const Volunteers = () => {
         setEmail("");
         setGender(0);
         setVolunteeredProjects([]);
-        setIsCreateVolunteerOpen(false);
+        // setIsCreateVolunteerOpen(false);
     };
 
     const handleAddVolunteer = () => {
@@ -104,24 +106,24 @@ const Volunteers = () => {
             return;
         }
         dispatch(addVolunteer({
-            first_name: firstName, middle_name: middleName, last_name: lastName, age: age,
+            first_name: firstName, middle_name: middleName, last_name: lastName, age: age, disability: disability,
             education_level_id: Number(educationLevel), nationality: volunteerNationality, phone: phone, email: email, gender_id: genderChoice, projects: volunteeredProjects
         }))
             .unwrap()
             .then(() => {
                 resetForm();
-
-                setFirstname("");
-                setMiddleName("");
-                setLastName("");
-                setAge("");
-                setNationality("");
-                setEducationLevel(0);
-                setCourseName("");
-                setPhone("");
-                setEmail("");
-                setGender(0);
-                setVolunteeredProjects([]);
+                // setFirstname("");
+                // setMiddleName("");
+                // setLastName("");
+                // setAge("");
+                // setDisability(false);
+                // setNationality("");
+                // setEducationLevel(0);
+                // setCourseName("");
+                // setPhone("");
+                // setEmail("");
+                // setGender(0);
+                // setVolunteeredProjects([]);
                 setIsCreateVolunteerOpen(false);
                 dispatch(fetchVolunteers());
 
@@ -134,6 +136,7 @@ const Volunteers = () => {
         setFirstname(volunteer.first_name);
         setMiddleName(volunteer.middle_name);
         setLastName(volunteer.last_name);
+        setDisability(volunteer.disability);
         setNationality(volunteer.volunteerNationality);
         setAge(volunteer.age);
         setEducationLevel(volunteer.education_level?.id.toString() || "");
@@ -142,25 +145,26 @@ const Volunteers = () => {
         setEmail(volunteer.email);
         setGender(volunteer.gender?.id.toString() || "");
         setVolunteeredProjects(volunteer.projects || []);
-        setIsEditVolunteerOpen(true);
+        setIsEditOpen(true);
     };
 
     const handleUpdateVolunteer = () => {
         dispatch(updateVolunteer({
-            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age,
+            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, disability: disability,course_name:courseName,
             education_level: educationLevel, nationality: volunteerNationality, phone: phone, email: email, gender_id: genderChoice, projects: volunteeredProjects
         }))
             .unwrap()
             .then(() => {
                 resetForm();
-                setIsEditVolunteerOpen(false);
+                setIsEditOpen(false);
                 setID(0);
                 setFirstname("");
                 setMiddleName("");
                 setLastName("");
                 setAge("");
+                setDisability(false);
                 setNationality("");
-                setEducationLevel(0);
+                setEducationLevel("");
                 setCourseName("");
                 setPhone("");
                 setEmail("");
@@ -169,7 +173,7 @@ const Volunteers = () => {
                 setIsCreateVolunteerOpen(false);
                 dispatch(fetchVolunteers());
             });
-        setEditingVolunteer(null); // Close the dialog after updating
+        setEditingVolunteer(false); // Close the dialog after updating
     };
 
     const handleDeleteVolunteer = () => {
@@ -200,7 +204,15 @@ const Volunteers = () => {
                 <div className="flex justify-between items-center mt-9">
 
                     <h2 className="text-lg font-semibold">{(volunteers.length).toString()} {volunteers.length <= 1 ? ('Volunteer') : 'Volunteers'}</h2>
-                    <Dialog>
+                    <Dialog
+                        open={isCreateVolunteerOpen}
+                        onOpenChange={(open) => {
+                            setIsCreateVolunteerOpen(open);
+                            if (open) {
+                                resetForm(); // Reset form when opening create dialog
+                            }
+                        }}
+                    >
                         <DialogTrigger asChild>
                             <Button className="flex items-center gap-2">
                                 <Plus size={18} />
@@ -233,6 +245,20 @@ const Volunteers = () => {
                                 <Input type="text" id="lastname"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+
+
+                            <div className="flex items-center gap-2">
+                                <Label htmlFor="disability" className="text-sm font-medium">
+                                    Disability (Physical or Psychological)
+                                </Label>
+                                <Input
+                                    type="checkbox"
+                                    id="disability"
+                                    checked={disability}
+                                    onChange={(e) => setDisability(e.target.checked)}
+                                    className="h-4 w-4"
                                 />
                             </div>
 
@@ -389,11 +415,13 @@ const Volunteers = () => {
                                                     />
                                                 </DialogTrigger>
                                                 {/* Edit Dialog */}
-                                                <DialogContent open={isEditVolunteerOpen} onOpenChange={(open) => {
+                                                <DialogContent 
+                                                open={isEditVolunteerOpen}
+                                                onOpenChange={(open) => {
                                                     setIsEditOpen(open);
                                                     if (!open) {
                                                         resetForm(); // Reset form when closing edit dialog
-                                                        setEditingVolunteer(null);
+                                                        setIsEditOpen(false);
                                                     }
                                                 }}>
                                                     <DialogHeader>
@@ -452,13 +480,27 @@ const Volunteers = () => {
                                                         />
                                                     </div>
 
-                                                    {/* <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="age-range">Age range</Label>
-                                                        <Input type="text" id="age-range"
-                                                            value={}
-                                                            onChange={(e) => setAgeRange(e.target.value)}
-                                                        />
-                                                    </div> */}
+                                                    <div className="grid w-full max-w items-center gap-1.5">
+                                                        <Label htmlFor="nationality">Nationality</Label>
+
+                                                        <Select
+                                                            value={volunteerNationality}
+                                                            onValueChange={(value) => setNationality(value)}
+                                                        >
+                                                            <SelectTrigger className="w-full max-w">
+                                                                <SelectValue placeholder="Select Nationality" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectGroup>
+                                                                    {Array.isArray(nationalities) && nationalities.map((type) => (
+                                                                        <SelectItem key={type.id} value={type.id.toString()}>
+                                                                            {type.name}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectGroup>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
 
 
                                                     <div className="grid w-full max-w items-center gap-1.5">

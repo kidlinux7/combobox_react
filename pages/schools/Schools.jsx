@@ -48,7 +48,7 @@ const Schools = () => {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    
+
     const [id, setID] = useState(0);
     const [name, setName] = useState("");
     const [institutionType, setInstitutionType] = useState("");
@@ -88,17 +88,17 @@ const Schools = () => {
             return;
         }
 
-        dispatch(addSchool({ 
-            name: name, 
-            type_id: Number(institutionType), 
-            region_id: Number(region), 
-            toilets: Number(toilets) || 0, 
-            focal_person_fullname: focal_person_fullname, 
-            focal_person_phone: focal_person_phone, 
-            focal_person_email: focal_person_email, 
-            computers: Number(computers) || 0, 
-            libraries: Number(libraries) || 0, 
-            water_reserves: Number(water_reserves) || 0 
+        dispatch(addSchool({
+            name: name,
+            type_id: Number(institutionType),
+            region_id: Number(region),
+            toilets: Number(toilets) || 0,
+            focal_person_fullname: focal_person_fullname,
+            focal_person_phone: focal_person_phone,
+            focal_person_email: focal_person_email,
+            computers: Number(computers) || 0,
+            libraries: Number(libraries) || 0,
+            water_reserves: Number(water_reserves) || 0
         }))
             .unwrap()
             .then(() => {
@@ -133,18 +133,18 @@ const Schools = () => {
             return;
         }
 
-        dispatch(updateSchool({ 
+        dispatch(updateSchool({
             id: id,
-            name: name, 
-            type_id: Number(institutionType), 
-            region_id: Number(region), 
-            toilets: Number(toilets) || 0, 
-            focal_person_fullname: focal_person_fullname, 
-            focal_person_phone: focal_person_phone, 
-            focal_person_email: focal_person_email, 
-            computers: Number(computers) || 0, 
-            libraries: Number(libraries) || 0, 
-            water_reserves: Number(water_reserves) || 0 
+            name: name,
+            type_id: Number(institutionType),
+            region_id: Number(region),
+            toilets: Number(toilets) || 0,
+            focal_person_fullname: focal_person_fullname,
+            focal_person_phone: focal_person_phone,
+            focal_person_email: focal_person_email,
+            computers: Number(computers) || 0,
+            libraries: Number(libraries) || 0,
+            water_reserves: Number(water_reserves) || 0
         }))
             .unwrap()
             .then(() => {
@@ -186,29 +186,32 @@ const Schools = () => {
                     <h2 className="text-xl font-semibold">
                         {schools.length} {schools.length === 1 ? 'School' : 'Schools'}
                     </h2>
-                    
+
                     {/* Create School Dialog */}
-                    <Dialog open={isCreateOpen} onOpenChange={(open) => {
+                    <Dialog 
+                    open={isCreateOpen} 
+                    onOpenChange={(open) => {
                         setIsCreateOpen(open);
                         if (open) {
                             resetForm(); // Reset form when opening create dialog
                         }
-                    }}>
+                    }}
+                    >
                         <DialogTrigger asChild>
                             <Button className="flex items-center gap-2">
                                 <Plus size={18} />
-                                New School
+                                Add School
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Create New School</DialogTitle>
+                                <DialogTitle>Add School</DialogTitle>
                             </DialogHeader>
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-name">Name</Label>
-                                <Input 
-                                    type="text" 
+                                <Input
+                                    type="text"
                                     id="create-name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -217,8 +220,8 @@ const Schools = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-type">Type</Label>
-                                <Select 
-                                    value={institutionType} 
+                                <Select
+                                    value={institutionType}
                                     onValueChange={(value) => setInstitutionType(value)}
                                 >
                                     <SelectTrigger className="w-full max-w">
@@ -238,8 +241,8 @@ const Schools = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-region">Region</Label>
-                                <Select 
-                                    value={region} 
+                                <Select
+                                    value={region}
                                     onValueChange={(value) => setRegion(value)}
                                 >
                                     <SelectTrigger className="w-full max-w">
@@ -259,8 +262,8 @@ const Schools = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-toilets">Toilets</Label>
-                                <Input 
-                                    type="number" 
+                                <Input
+                                    type="number"
                                     id="create-toilets"
                                     value={toilets}
                                     onChange={(e) => setToilets(e.target.value)}
@@ -269,8 +272,8 @@ const Schools = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-computers">Computers</Label>
-                                <Input 
-                                    type="number" 
+                                <Input
+                                    type="number"
                                     id="create-computers"
                                     value={computers}
                                     onChange={(e) => setComputers(e.target.value)}
@@ -279,8 +282,8 @@ const Schools = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-libraries">Libraries</Label>
-                                <Input 
-                                    type="number" 
+                                <Input
+                                    type="number"
                                     id="create-libraries"
                                     value={libraries}
                                     onChange={(e) => setLibraries(e.target.value)}
@@ -289,38 +292,38 @@ const Schools = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-water">Water Reserves</Label>
-                                <Input 
-                                    type="number" 
+                                <Input
+                                    type="number"
                                     id="create-water"
                                     value={water_reserves}
                                     onChange={(e) => setWaterReserves(e.target.value)}
                                 />
                             </div>
 
-                                 <div className="grid w-full max-w items-center gap-1.5">
+                            <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-focal-fullname">Focal Fullname</Label>
-                                <Input 
-                                    type="text" 
+                                <Input
+                                    type="text"
                                     id="create-focal-fullname"
                                     value={focal_person_fullname}
                                     onChange={(e) => setFocalFullname(e.target.value)}
                                 />
                             </div>
 
-                                 <div className="grid w-full max-w items-center gap-1.5">
+                            <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-focal-phone">Focal Phone</Label>
-                                <Input 
-                                    type="number" 
+                                <Input
+                                    type="number"
                                     id="create-focal-phone"
                                     value={focal_person_phone}
                                     onChange={(e) => setFocalPhone(e.target.value)}
                                 />
                             </div>
 
-                                 <div className="grid w-full max-w items-center gap-1.5">
+                            <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="create-focal-email">Focal Email</Label>
-                                <Input 
-                                    type="email" 
+                                <Input
+                                    type="email"
                                     id="create-focal-email"
                                     value={focal_person_email}
                                     onChange={(e) => setFocalEmail(e.target.value)}
@@ -401,8 +404,8 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-name">Name</Label>
-                            <Input 
-                                type="text" 
+                            <Input
+                                type="text"
                                 id="edit-name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -411,8 +414,8 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-type">Type</Label>
-                            <Select 
-                                value={institutionType} 
+                            <Select
+                                value={institutionType}
                                 onValueChange={(value) => setInstitutionType(value)}
                             >
                                 <SelectTrigger className="w-full max-w">
@@ -432,8 +435,8 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-region">Region</Label>
-                            <Select 
-                                value={region} 
+                            <Select
+                                value={region}
                                 onValueChange={(value) => setRegion(value)}
                             >
                                 <SelectTrigger className="w-full max-w">
@@ -453,8 +456,8 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-toilets">Toilets</Label>
-                            <Input 
-                                type="number" 
+                            <Input
+                                type="number"
                                 id="edit-toilets"
                                 value={toilets}
                                 onChange={(e) => setToilets(e.target.value)}
@@ -463,8 +466,8 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-computers">Computers</Label>
-                            <Input 
-                                type="number" 
+                            <Input
+                                type="number"
                                 id="edit-computers"
                                 value={computers}
                                 onChange={(e) => setComputers(e.target.value)}
@@ -473,8 +476,8 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-libraries">Libraries</Label>
-                            <Input 
-                                type="number" 
+                            <Input
+                                type="number"
                                 id="edit-libraries"
                                 value={libraries}
                                 onChange={(e) => setLibraries(e.target.value)}
@@ -483,38 +486,38 @@ const Schools = () => {
 
                         <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-water">Water Reserves</Label>
-                            <Input 
-                                type="number" 
+                            <Input
+                                type="number"
                                 id="edit-water"
                                 value={water_reserves}
                                 onChange={(e) => setWaterReserves(e.target.value)}
                             />
                         </div>
 
-                                <div className="grid w-full max-w items-center gap-1.5">
+                        <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-focal-fullname">Focal Fullname</Label>
-                            <Input 
-                                type="text" 
+                            <Input
+                                type="text"
                                 id="edit-focal-fullname"
                                 value={focal_person_fullname}
                                 onChange={(e) => setFocalFullname(e.target.value)}
                             />
                         </div>
 
-                                <div className="grid w-full max-w items-center gap-1.5">
+                        <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-focal-phone">Focal Phone</Label>
-                            <Input 
-                                type="number" 
+                            <Input
+                                type="number"
                                 id="edit-focal-phone"
                                 value={focal_person_phone}
                                 onChange={(e) => setFocalPhone(e.target.value)}
                             />
                         </div>
 
-                                <div className="grid w-full max-w items-center gap-1.5">
+                        <div className="grid w-full max-w items-center gap-1.5">
                             <Label htmlFor="edit-focal-email">Focal Email</Label>
-                            <Input 
-                                type="email" 
+                            <Input
+                                type="email"
                                 id="edit-focal-email"
                                 value={focal_person_email}
                                 onChange={(e) => setFocalEmail(e.target.value)}
