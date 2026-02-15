@@ -12,6 +12,7 @@ import universityReducer from './universitySlice';
 import centerReducer from './centerSlice';
 import volunteerReducer from './volunteerSlice';
 import nationalityReducer from './nationalitySlice'
+import ambassadorReducer from './ambassadorSlice'
 
 
 
@@ -29,7 +30,8 @@ const store = configureStore({
     university: universityReducer,
     center: centerReducer,
     volunteer: volunteerReducer,
-    nationality: nationalityReducer
+    nationality: nationalityReducer,
+    ambassador:ambassadorReducer
   },
 });
 

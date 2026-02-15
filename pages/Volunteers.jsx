@@ -49,15 +49,12 @@ const Volunteers = () => {
     const { genders } = useSelector((state) => state.gender);
     const { nationalities } = useSelector((state) => state.nationality);
     const { educationLevels } = useSelector((state) => state.educationLevel);
-    const { centers, status } = useSelector((state) => state.center);
+    const { status } = useSelector((state) => state.center);
 
     const [editingVolunteer, setEditingVolunteer] = useState(null);
     const [isCreateVolunteerOpen, setIsCreateVolunteerOpen] = useState(false);
     const [isEditVolunteerOpen, setIsEditVolunteerOpen] = useState(false);
     const [isDeleteVolunteerOpen, setIsDeleteVolunteerOpen] = useState(false);
-
-    const [editingschool, setEditingschool] = useState(null); // Track the school you're editing
-
 
     // Volunteer form states
     const [id, setID] = useState(0);
@@ -97,7 +94,6 @@ const Volunteers = () => {
         setEmail("");
         setGender(0);
         setVolunteeredProjects([]);
-        // setIsCreateVolunteerOpen(false);
     };
 
     const handleAddVolunteer = () => {
@@ -106,27 +102,23 @@ const Volunteers = () => {
             return;
         }
         dispatch(addVolunteer({
-            first_name: firstName, middle_name: middleName, last_name: lastName, age: age, disability: disability,
-            education_level_id: Number(educationLevel), nationality: volunteerNationality, phone: phone, email: email, gender_id: genderChoice, projects: volunteeredProjects
+            first_name: firstName,
+            middle_name: middleName,
+            last_name: lastName,
+            age: age,
+            disability: disability,
+            education_level_id: Number(educationLevel),
+            nationality: Number(volunteerNationality),
+            phone: phone,
+            email: email,
+            gender_id: Number(genderChoice),
+            projects: volunteeredProjects
         }))
             .unwrap()
             .then(() => {
                 resetForm();
-                // setFirstname("");
-                // setMiddleName("");
-                // setLastName("");
-                // setAge("");
-                // setDisability(false);
-                // setNationality("");
-                // setEducationLevel(0);
-                // setCourseName("");
-                // setPhone("");
-                // setEmail("");
-                // setGender(0);
-                // setVolunteeredProjects([]);
                 setIsCreateVolunteerOpen(false);
                 dispatch(fetchVolunteers());
-
             });
     };
 
@@ -137,43 +129,39 @@ const Volunteers = () => {
         setMiddleName(volunteer.middle_name);
         setLastName(volunteer.last_name);
         setDisability(volunteer.disability);
-        setNationality(volunteer.volunteerNationality);
+        setNationality(volunteer.nationality?.id?.toString() || volunteer.nationality?.toString() || "");
         setAge(volunteer.age);
-        setEducationLevel(volunteer.education_level?.id.toString() || "");
+        setEducationLevel(volunteer.education_level?.id?.toString() || volunteer.education_level?.toString() || "");
         setCourseName(volunteer.course_name);
         setPhone(volunteer.phone);
         setEmail(volunteer.email);
-        setGender(volunteer.gender?.id.toString() || "");
-        setVolunteeredProjects(volunteer.projects || []);
-        setIsEditOpen(true);
+        setGender(volunteer.gender?.id?.toString() || volunteer.gender?.toString() || "");
+        setVolunteeredProjects(volunteer.projects?.map(p => (p.id ? p.id.toString() : p.toString())) || []);
+        setIsEditVolunteerOpen(true);
     };
 
     const handleUpdateVolunteer = () => {
         dispatch(updateVolunteer({
-            id: id, first_name: firstName, middle_name: middleName, last_name: lastName, age: age, disability: disability,course_name:courseName,
-            education_level: educationLevel, nationality: volunteerNationality, phone: phone, email: email, gender_id: genderChoice, projects: volunteeredProjects
+            id: id,
+            first_name: firstName,
+            middle_name: middleName,
+            last_name: lastName,
+            age: age,
+            disability: disability,
+            course_name: courseName,
+            education_level_id: Number(educationLevel),
+            nationality: Number(volunteerNationality),
+            phone: phone,
+            email: email,
+            gender_id: Number(genderChoice),
+            projects: volunteeredProjects
         }))
             .unwrap()
             .then(() => {
                 resetForm();
-                setIsEditOpen(false);
-                setID(0);
-                setFirstname("");
-                setMiddleName("");
-                setLastName("");
-                setAge("");
-                setDisability(false);
-                setNationality("");
-                setEducationLevel("");
-                setCourseName("");
-                setPhone("");
-                setEmail("");
-                setGender(0);
-                setVolunteeredProjects([]);
-                setIsCreateVolunteerOpen(false);
+                setIsEditVolunteerOpen(false);
                 dispatch(fetchVolunteers());
             });
-        setEditingVolunteer(false); // Close the dialog after updating
     };
 
     const handleDeleteVolunteer = () => {
@@ -188,7 +176,6 @@ const Volunteers = () => {
     };
 
 
-    // Close the dialog after updating
     const handleDeleteClick = (volunteer) => {
         setEditingVolunteer(volunteer);
         setID(volunteer.id);
@@ -197,19 +184,18 @@ const Volunteers = () => {
         setLastName(volunteer.last_name);
         setIsDeleteVolunteerOpen(true);
     };
+
     return (
         <div className="p-1">
             <div className="mt-6">
-                {/* Teachers section */}
                 <div className="flex justify-between items-center mt-9">
-
-                    <h2 className="text-lg font-semibold">{(volunteers.length).toString()} {volunteers.length <= 1 ? ('Volunteer') : 'Volunteers'}</h2>
+                    <h2 className="text-lg font-semibold">{volunteers.length} {volunteers.length <= 1 ? 'Volunteer' : 'Volunteers'}</h2>
                     <Dialog
                         open={isCreateVolunteerOpen}
                         onOpenChange={(open) => {
                             setIsCreateVolunteerOpen(open);
                             if (open) {
-                                resetForm(); // Reset form when opening create dialog
+                                resetForm();
                             }
                         }}
                     >
@@ -248,7 +234,6 @@ const Volunteers = () => {
                                 />
                             </div>
 
-
                             <div className="flex items-center gap-2">
                                 <Label htmlFor="disability" className="text-sm font-medium">
                                     Disability (Physical or Psychological)
@@ -272,12 +257,11 @@ const Volunteers = () => {
 
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="nationality">Nationality</Label>
-
                                 <Select
                                     value={volunteerNationality}
                                     onValueChange={(value) => setNationality(value)}
                                 >
-                                    <SelectTrigger className="w-full max-w">
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Nationality" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -292,14 +276,13 @@ const Volunteers = () => {
                                 </Select>
                             </div>
 
-
                             <div className="grid w-full max-w items-center gap-1.5">
                                 <Label htmlFor="education-level">Educational Level</Label>
                                 <Select
                                     value={educationLevel}
                                     onValueChange={(value) => setEducationLevel(value)}
                                 >
-                                    <SelectTrigger className="w-full max-w">
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Education Level" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -338,14 +321,13 @@ const Volunteers = () => {
                                 />
                             </div>
 
-
                             <div className="grid w-full max-w items-center gap-1.5">
-                                <Label htmlFor="education-level">Gender</Label>
+                                <Label htmlFor="gender">Gender</Label>
                                 <Select
                                     value={genderChoice}
                                     onValueChange={(value) => setGender(value)}
                                 >
-                                    <SelectTrigger className="w-full max-w">
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Gender" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -374,7 +356,8 @@ const Volunteers = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
-                {status === "loading" && <p className="text-gray-500 mt-2">Loading centers...</p>}
+
+                {status === "loading" && <p className="text-gray-500 mt-2">Loading...</p>}
 
                 <Table>
                     <TableHeader>
@@ -382,7 +365,6 @@ const Volunteers = () => {
                             <TableHead>No</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Age</TableHead>
-                            {/* <TableHead>Age Range</TableHead> */}
                             <TableHead>Gender</TableHead>
                             <TableHead>Education Level</TableHead>
                             <TableHead>Phone</TableHead>
@@ -398,238 +380,23 @@ const Volunteers = () => {
                                     <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell>{volunteer.first_name + ' ' + volunteer.last_name}</TableCell>
                                     <TableCell>{volunteer.age}</TableCell>
-                                    {/* <TableCell>{school.region.name}</TableCell> */}
-                                    <TableCell>{volunteer.gender.name}</TableCell>
-                                    <TableCell>{volunteer.education_level.name}</TableCell>
+                                    <TableCell>{volunteer.gender?.name}</TableCell>
+                                    <TableCell>{volunteer.education_level?.name}</TableCell>
                                     <TableCell>{volunteer.phone}</TableCell>
                                     <TableCell>{volunteer.email}</TableCell>
                                     <TableCell>{dayjs(volunteer.created_at).format("dddd, MMMM D, YYYY h:mm A")}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center space-x-2">
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Pencil
-                                                        onClick={() => handleEditVolunteer(volunteer)} // Correctly pass a function
-                                                        size={17}
-                                                        className="cursor-pointer text-black-600"
-                                                    />
-                                                </DialogTrigger>
-                                                {/* Edit Dialog */}
-                                                <DialogContent 
-                                                open={isEditVolunteerOpen}
-                                                onOpenChange={(open) => {
-                                                    setIsEditOpen(open);
-                                                    if (!open) {
-                                                        resetForm(); // Reset form when closing edit dialog
-                                                        setIsEditOpen(false);
-                                                    }
-                                                }}>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Edit Volunteer Information</DialogTitle>
-                                                    </DialogHeader>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="firstname">Firstname</Label>
-                                                        <Input
-                                                            type="text"
-                                                            id="firstname"
-                                                            value={firstName}
-                                                            onChange={(e) => setFirstname(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="firstname">Middlename</Label>
-                                                        <Input
-                                                            type="text"
-                                                            id="middlename"
-                                                            value={middleName}
-                                                            onChange={(e) => setMiddleName(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="firstname">Lastname</Label>
-                                                        <Input
-                                                            type="text"
-                                                            id="lastname"
-                                                            value={lastName}
-                                                            onChange={(e) => setLastName(e.target.value)}
-                                                        />
-                                                    </div>
-
-
-                                                    <div className="flex items-center gap-2">
-                                                        <Label htmlFor="disability" className="text-sm font-medium">
-                                                            Disability (Physical or Psychological)
-                                                        </Label>
-                                                        <Input
-                                                            type="checkbox"
-                                                            id="disability"
-                                                            checked={disability}
-                                                            onChange={(e) => setDisability(e.target.checked)}
-                                                            className="h-4 w-4"
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="age">Age</Label>
-                                                        <Input type="number" id="age"
-                                                            value={age}
-                                                            onChange={(e) => setAge(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="nationality">Nationality</Label>
-
-                                                        <Select
-                                                            value={volunteerNationality}
-                                                            onValueChange={(value) => setNationality(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select Nationality" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(nationalities) && nationalities.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">Educational Level</Label>
-                                                        <Select
-                                                            value={educationLevel}
-                                                            onValueChange={(value) => setEducationLevel(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select Education Level" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(educationLevels) && educationLevels.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="course">Course name / Skill</Label>
-                                                        <Input type="text" id="course"
-                                                            value={courseName}
-                                                            onChange={(e) => setCourseName(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="phone">Phone</Label>
-                                                        <Input type="text" id="phone"
-                                                            value={phone}
-                                                            onChange={(e) => setPhone(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="email">Email</Label>
-                                                        <Input type="text" id="email"
-                                                            value={email}
-                                                            onChange={(e) => setEmail(e.target.value)}
-                                                        />
-                                                    </div>
-
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">Gender</Label>
-                                                        <Select
-                                                            value={genderChoice}
-                                                            onValueChange={(value) => setGender(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select Gender" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(genders) && genders.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-
-
-                                                    {/* <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="education-level">School</Label>
-                                                        <Select
-                                                            value={schoolChoice}
-                                                            onValueChange={(value) => setSchoolChoice(value)}
-                                                        >
-                                                            <SelectTrigger className="w-full max-w">
-                                                                <SelectValue placeholder="Select School" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    {Array.isArray(centers) && centers.map((type) => (
-                                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                                            {type.name}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div> */}
-
-                                                    <div className="grid w-full max-w items-center gap-1.5">
-                                                        <Label htmlFor="projects">Projects</Label>
-                                                        <MultiSelect
-                                                            options={Array.isArray(projects) ? projects.map(p => ({ label: p.name, value: p.id.toString() })) : []}
-                                                            value={volunteeredProjects}
-                                                            onValueChange={(value) => setVolunteeredProjects(value)}
-                                                            placeholder="Select Projects"
-                                                        />
-                                                    </div>
-
-
-                                                    <Button onClick={handleUpdateVolunteer}>Update</Button>
-                                                </DialogContent>
-                                            </Dialog>
-
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Trash2
-                                                        onClick={() => handleDeleteClick(volunteer)} // Correctly pass a function
-                                                        size={17}
-                                                        className="cursor-pointer text-black-600"
-                                                    />
-                                                </DialogTrigger>
-
-                                                {/* Delete Dialog */}
-                                                <DialogContent onClose={() => setIsDeleteVolunteerOpen(null)}>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Delete school Information</DialogTitle>
-                                                        <h3>This action will permanently erase <b>{firstName + ' ' + middleName + ' ' + lastName}</b> from the database</h3>
-                                                    </DialogHeader>
-                                                    <Button variant="destructive" onClick={handleDeleteVolunteer}>Delete</Button>
-                                                </DialogContent>
-                                            </Dialog>
-
-
-
-
+                                            <Pencil
+                                                onClick={() => handleEditVolunteer(volunteer)}
+                                                size={17}
+                                                className="cursor-pointer text-black-600"
+                                            />
+                                            <Trash2
+                                                onClick={() => handleDeleteClick(volunteer)}
+                                                size={17}
+                                                className="cursor-pointer text-black-600"
+                                            />
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -637,16 +404,178 @@ const Volunteers = () => {
                     </TableBody>
                 </Table>
 
+                {/* Edit Dialog */}
+                <Dialog open={isEditVolunteerOpen} onOpenChange={setIsEditVolunteerOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Edit Volunteer Information</DialogTitle>
+                        </DialogHeader>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-firstname">Firstname</Label>
+                            <Input
+                                type="text"
+                                id="edit-firstname"
+                                value={firstName}
+                                onChange={(e) => setFirstname(e.target.value)}
+                            />
+                        </div>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-middlename">Middlename</Label>
+                            <Input
+                                type="text"
+                                id="edit-middlename"
+                                value={middleName}
+                                onChange={(e) => setMiddleName(e.target.value)}
+                            />
+                        </div>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-lastname">Lastname</Label>
+                            <Input
+                                type="text"
+                                id="edit-lastname"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                            />
+                        </div>
 
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="edit-disability" className="text-sm font-medium">
+                                Disability (Physical or Psychological)
+                            </Label>
+                            <Input
+                                type="checkbox"
+                                id="edit-disability"
+                                checked={disability}
+                                onChange={(e) => setDisability(e.target.checked)}
+                                className="h-4 w-4"
+                            />
+                        </div>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-age">Age</Label>
+                            <Input type="number" id="edit-age"
+                                value={age}
+                                onChange={(e) => setAge(e.target.value)}
+                            />
+                        </div>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-nationality">Nationality</Label>
+                            <Select
+                                value={volunteerNationality}
+                                onValueChange={(value) => setNationality(value)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Nationality" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(nationalities) && nationalities.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-education-level">Educational Level</Label>
+                            <Select
+                                value={educationLevel}
+                                onValueChange={(value) => setEducationLevel(value)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Education Level" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(educationLevels) && educationLevels.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-course">Course name / Skill</Label>
+                            <Input type="text" id="edit-course"
+                                value={courseName}
+                                onChange={(e) => setCourseName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-phone">Phone</Label>
+                            <Input type="text" id="edit-phone"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-email">Email</Label>
+                            <Input type="text" id="edit-email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-gender">Gender</Label>
+                            <Select
+                                value={genderChoice}
+                                onValueChange={(value) => setGender(value)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Gender" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {Array.isArray(genders) && genders.map((type) => (
+                                            <SelectItem key={type.id} value={type.id.toString()}>
+                                                {type.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid w-full max-w items-center gap-1.5">
+                            <Label htmlFor="edit-projects">Projects</Label>
+                            <MultiSelect
+                                options={Array.isArray(projects) ? projects.map(p => ({ label: p.name, value: p.id.toString() })) : []}
+                                value={volunteeredProjects}
+                                onValueChange={(value) => setVolunteeredProjects(value)}
+                                placeholder="Select Projects"
+                            />
+                        </div>
+
+                        <Button onClick={handleUpdateVolunteer}>Update</Button>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Delete Dialog */}
+                <Dialog open={isDeleteVolunteerOpen} onOpenChange={setIsDeleteVolunteerOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete Volunteer Information</DialogTitle>
+                            <h3>This action will permanently erase <b>{firstName + ' ' + middleName + ' ' + lastName}</b> from the database</h3>
+                        </DialogHeader>
+                        <Button variant="destructive" onClick={handleDeleteVolunteer}>Delete</Button>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     );
 }
-export default Volunteers
+
+export default Volunteers;
